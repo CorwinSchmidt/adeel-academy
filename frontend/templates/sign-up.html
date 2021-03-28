@@ -13,9 +13,14 @@
         </a>
       </nav>
   </header>
+
         
   <!-- User Input -->
-  <form method="POST" style="padding: 40px;" onsubmit="signUp()">
+  <form action="javascript:return false" onsubmit="signUp('POST', 'logins')" style="margin-top: 20px;" style="padding: 40px;">
+
+      <label for="name">Name:</label><br>
+      <input type="name" id="name" name="name" required><br>
+
       <label for="email">Email:</label><br>
       <input type="email" id="email" name="email" required><br>
       
@@ -28,12 +33,19 @@
       <label for="Teacher">Teacher</label><br>
 
       <p style="margin: 5px;">Password must be at least 6 characters long.</p>
-      <button type="submit" style="margin-top: 20px;">Sign Up</button>
+      <button type="submit" >Sign Up</button>
   </form>
+
+  <div id="error">
+
+  </div>
 
   <p style="text-align: center;">Already have an account?</p>
   <div style="text-align: center;">
       <a href="{{ url_for('log_in') }}" style="color: blue;">Log In</a>
   </div>
+
+  <script src="{{url_for('static', filename='js/log-in.js')}}"></script>
+
 
 {% endblock %}

@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, session
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.urandom(24)
 CORS(app=app)
 
 # Used to check whether user can access pages
@@ -13,21 +15,26 @@ def index():
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
+
+    # when post from signup, set userId and role for user
+    if request.method == 'POST':
+        session["userId"] = request.get_json()['userId']
+
+        if request.get_json()['role'] == 'teachers':
+            session["role"] = "teacher"
+        if request.get_json()['role'] == 'students':
+            session["role"] = "student"
+
     return render_template('sign-up.html')
 
 @app.route('/log-in', methods=['GET', 'POST'])
 def log_in():
-    # if authenticated:
-    #     return redirect(url_for('dashboard'))
-    # else:
         return render_template('log-in.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    # if authenticated:
-        return render_template('dashboard.html', courses=["Biology", "Physics", "Math"])
-    # else:
-    #     return redirect(url_for('log_in'))
+    return render_template('dashboard.html', courses=[session["userId"], "Physics", "Math"])
+
 
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
@@ -118,15 +118,33 @@ class StudentListResource(Resource):
         return students_schema.dump(students)
 
     def post(self):
+
+        data = request.get_json(force=True)
+
         new_student = Student(
             name=request.json['name'],
             email=request.json['email'],
             connected=request.json['connected'],
             loginId=request.json['loginId']
         )
+    
+        
         db.session.add(new_student)
-        db.session.commit()
-        return student_schema.dump(new_student)
+        
+        try:
+            db.session.commit()
+            js = {
+                "userId" : Student.query.filter_by(email=data['email']).first().studentId
+            }
+            print(js)
+            resp = jsonify(js)
+            resp.status_code = 200
+
+        except Exception as error:
+            print(error)
+            resp = Response(status=500, mimetype='application/json')
+
+        return resp
 
 
 class StudentResource(Resource):
@@ -242,16 +260,18 @@ class Teacher(db.Model):
     email = db.Column(db.String(50))
     courses = db.relationship("TeacherCourses")
     connected = db.Column(db.Boolean)
+    loginId = db.Column(db.Integer, db.ForeignKey('login.loginId'))
+
 
 
     def __repr__(self):
-        return "Teacher Id : {}, Name: {}, Email: {}, Courses: {}, Connected: {}".format(self.teacherId, self.name, self.email, self.courses, self.connected)
+        return "Teacher Id : {}, Name: {}, Email: {}, Courses: {}, Connected: {}, Login: {}".format(self.teacherId, self.name, self.email, self.courses, self.connected, self.loginId)
 
 
 # Marshmellow Schema
 class TeacherSchema(ma.Schema):
     class Meta:
-        fields = ("teacherId", "name", "email", "courses", "connected")
+        fields = ("teacherId", "name", "email", "courses", "connected", "loginId")
 
 # Schema for Multiple Teachers
 teachers_schema = TeacherSchema(many = True)
@@ -274,7 +294,8 @@ class TeacherListResource(Resource):
         newTeacher = Teacher(
             name = request.json['name'],
             email = request.json['email'],
-            connected = connection
+            connected = connection,
+            loginId = request.json['loginId']
         )
 
         db.session.add(newTeacher)
@@ -1156,7 +1177,7 @@ class Login(db.Model):
     password = db.Column(db.String(40))
 
     def __repr__(self):
-        return "loginId: {}, email: {}, password: {}".format(self.courseId, self.email, self.password)
+        return "loginId: {}, email: {}, password: {}".format(self.loginId, self.email, self.password)
 
 
 class LoginSchema(ma.Schema):
@@ -1181,9 +1202,23 @@ class LoginListResource(Resource):
             email=data['email'],
             password=data['password'],
         )
+        
         db.session.add(new_login)
-        db.session.commit()
-        return jsonify({"hello":"asdf"})
+        
+        try:
+            db.session.commit()
+            js = {
+                "loginId" : Login.query.filter_by(email=data['email']).first().loginId
+            }
+            print(js)
+            resp = jsonify(js)
+            resp.status_code = 200
+
+        except Exception as error:
+            print(error)
+            resp = Response(status=500, mimetype='application/json')
+
+        return resp
 
 
 class LoginResource(Resource):
@@ -1210,8 +1245,54 @@ class LoginResource(Resource):
         db.session.commit()
         return '', 204
 
+class LogInCheck(Resource):
+    def post(self):
+        print("loggin in")
+
+
+        data = request.get_json(force=True)
+
+        email=data['email']
+        password=data['password']
+    
+
+        # check if email matches a login object
+        if Login.query.filter_by(email = email).first() is not None:
+            print("exists")
+            # get login
+            loginObj = Login.query.filter_by(email = email).first()
+            # check pass input against loginobj
+            print(password, loginObj.password)
+            if password == loginObj.password:
+                # if user is a student
+                print()
+                if Student.query.filter_by(loginId = loginObj.loginId).first().loginId is not None:
+                    print("is student")
+                else:
+                    print("is teacher")
+        else:
+            print("error loggin in")
+                
+
+        print("jello")        
+        # try:
+        #     db.session.commit()
+        #     js = {
+        #         "loginId" : Login.query.filter_by(email=data['email']).first().loginId
+        #     }
+        #     print(js)
+        #     resp = jsonify(js)
+        #     resp.status_code = 200
+
+        # except Exception as error:
+        #     print(error)
+        #     resp = Response(status=500, mimetype='application/json')
+
+        # return resp
+
 
 api.add_resource(LoginListResource, '/logins')
+api.add_resource(LogInCheck, '/logincheck')
 api.add_resource(LoginResource, '/logins/<int:login_id>')
 
 '''

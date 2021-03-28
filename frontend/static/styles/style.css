@@ -167,4 +167,11 @@ input:valid {
 .header__cta:hover {
   opacity: 0.75;
 }
+
+#error {
+  display: none;
+  color: #ab1b23;
+  text-align: center;
+  padding-bottom: 10vh;
+}
 /*# sourceMappingURL=style.css.map */
