@@ -3,11 +3,8 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = '23r23423988a8f8fsw12'
 CORS(app=app)
-
-# Used to check whether user can access pages
-authenticated = True
 
 @app.route('/')
 def index():
@@ -19,17 +16,32 @@ def sign_up():
     # when post from signup, set userId and role for user
     if request.method == 'POST':
         session["userId"] = request.get_json()['userId']
-
+        print(session["userId"])
         if request.get_json()['role'] == 'teachers':
             session["role"] = "teacher"
         if request.get_json()['role'] == 'students':
             session["role"] = "student"
 
+        return redirect(url_for('dashboard'))
+
+
     return render_template('sign-up.html')
 
 @app.route('/log-in', methods=['GET', 'POST'])
 def log_in():
-        return render_template('log-in.html')
+    # when post from signup, set userId and role for user
+    if request.method == 'POST':
+        print(request.get_json()['userId'])
+        session["userId"] = request.get_json()['userId']
+        print(session["userId"])
+        session["role"] = request.get_json()['role']
+
+        print("redirecting to dhasboard")
+    
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('log-in.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():

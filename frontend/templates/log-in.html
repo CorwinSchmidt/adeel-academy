@@ -16,7 +16,7 @@
   </header>
   
   <!-- User Input -->
-  <form onsubmit="logIn()" method="POST" style="padding: 40px;">
+  <form  action="javascript:return false" onsubmit="logIn('POST', 'logincheck')" method="POST" style="padding: 40px;">
       <label for="email">Email:</label><br>
       <input type="email" id="email" name="email" required><br>
       <label for="password">Password:</label><br>
@@ -24,10 +24,17 @@
       <button type="submit" style="margin-top: 20px;">Log In</button>
   </form>
 
+  <div id="error">
+
+  </div>
+
   <p style="text-align: center;">Don't have an account?</p>
   <div style="text-align: center;">
       <a href="{{ url_for('sign_up') }}" style="color: blue;">Sign Up</a>
   </div>
+
+
+  <script src="{{url_for('static', filename='js/log-in.js')}}"></script>
 
 
 

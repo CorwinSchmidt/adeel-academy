@@ -1256,40 +1256,49 @@ class LogInCheck(Resource):
         password=data['password']
     
 
+        exists = False
+        role = ""
         # check if email matches a login object
         if Login.query.filter_by(email = email).first() is not None:
-            print("exists")
             # get login
             loginObj = Login.query.filter_by(email = email).first()
             # check pass input against loginobj
             print(password, loginObj.password)
             if password == loginObj.password:
                 # if user is a student
-                print()
-                if Student.query.filter_by(loginId = loginObj.loginId).first().loginId is not None:
+                if Student.query.filter_by(loginId = loginObj.loginId).first() is not None:
                     print("is student")
+                    exists = True
+                    role = "student"
                 else:
                     print("is teacher")
+                    exists = True
+                    role = "teacher"
+                    
         else:
             print("error loggin in")
                 
 
-        print("jello")        
-        # try:
-        #     db.session.commit()
-        #     js = {
-        #         "loginId" : Login.query.filter_by(email=data['email']).first().loginId
-        #     }
-        #     print(js)
-        #     resp = jsonify(js)
-        #     resp.status_code = 200
+        if exists:
+            js = {
+                "userId" : loginObj.loginId,
+                "role" : role
 
-        # except Exception as error:
-        #     print(error)
-        #     resp = Response(status=500, mimetype='application/json')
+            }
+            print(js)
+            resp = jsonify(js)
+            resp.status_code = 200
+        else:
+            js = {
+                "userId" : "none",
+                "role" : "none"
 
-        # return resp
+            }
+            resp = jsonify(js)
+            resp.status_code = 500
 
+
+        return resp
 
 api.add_resource(LoginListResource, '/logins')
 api.add_resource(LogInCheck, '/logincheck')
