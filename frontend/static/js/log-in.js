@@ -1,7 +1,7 @@
 let url_base = "http://127.0.0.1:5000/" 
 
 
-// this funcitons creates a user or teacher based on the signup input
+// this function creates a user or teacher based on the signup input
 function createTeacherOrStudent(method, loginId, email, name) {
 
 
