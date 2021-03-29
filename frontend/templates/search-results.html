@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block header %}
+<title>Adeel Academy | Results</title>
+{% endblock %}
+
+{% block body %}
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ab1b23;">
+        <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('inbox') }}">Inbox</a>
+            </li>
+            </ul>
+            <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit" style="color: white;">Search</button>
+            </form>
+        </div>
+        </div>
+    </nav>
+{% endblock %}

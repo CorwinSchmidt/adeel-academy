@@ -121,7 +121,7 @@ def log_in():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     print("redirecting to dashboard, current user is: ", session["userId"])
-    return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"])
+    return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"], len = len([session["loginId"], "Physics", "Math"]))
 
 
 @app.route('/inbox', methods=['GET', 'POST'])
@@ -131,6 +131,10 @@ def inbox():
 @app.route('/course', methods=['GET', 'POST'])
 def course():
     return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
+
+@app.route('/results', methods=['GET', 'POST'])
+def results():
+    return render_template('search-results.html', results=[('user', 'user1'), ('course', 'course1'), ('course', 'course2'), ('user', 'user2')])
 
 if __name__ == '__main__':
     app.run(port="8000", debug=True)
