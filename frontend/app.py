@@ -120,13 +120,17 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    print("redirecting to dhasboard, current user is: ", session["userId"])
+    print("redirecting to dashboard, current user is: ", session["userId"])
     return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"])
 
 
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
     return render_template('inbox.html', chats = ["Maria", "Joe", "Frank"])
+
+@app.route('/course', methods=['GET', 'POST'])
+def course():
+    return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
 
 if __name__ == '__main__':
     app.run(port="8000", debug=True)
