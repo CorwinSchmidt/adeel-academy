@@ -1,11 +1,6 @@
 let url_base = "http://127.0.0.1:5000/" 
 
 
-<<<<<<< HEAD
-=======
-// this function creates a user or teacher based on the signup input
-function createTeacherOrStudent(method, loginId, email, name) {
->>>>>>> 0e17cea18da14db8748c57243ecc4d4dd7ea0798
 
 function sendToBackend(userId, role) {
     const data = {

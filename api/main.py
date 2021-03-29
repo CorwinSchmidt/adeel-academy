@@ -1210,7 +1210,7 @@ class LoginListResource(Resource):
             js = {
                 "loginId" : Login.query.filter_by(email=data['email']).first().loginId
             }
-            print(js)
+            print("returning from creation", js)
             resp = jsonify(js)
             resp.status_code = 200
 
@@ -1281,18 +1281,16 @@ class LogInCheck(Resource):
 
         if exists:
             js = {
-                "userId" : loginObj.loginId,
+                "loginId" : loginObj.loginId,
                 "role" : role
-
             }
-            print(js)
+            print("user exists", js)
             resp = jsonify(js)
             resp.status_code = 200
         else:
             js = {
-                "userId" : "none",
+                "loginId" : "none",
                 "role" : "none"
-
             }
             resp = jsonify(js)
             resp.status_code = 500

@@ -16,29 +16,54 @@
 
         
   <!-- User Input -->
-  <form action="javascript:return false" onsubmit="signUp('POST', 'logins')" style="margin-top: 20px;" style="padding: 40px;">
+  <form action="" method="post" novalidate>
+    <p>
+      {{ form.name.label }}<br>
+      {{ form.name(size=32) }}<br>
+      {% for error in form.name.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
 
-      <label for="name">Name:</label><br>
-      <input type="name" id="name" name="name" required><br>
+    <p>
+        {{ form.email.label }}<br>
+        {{ form.email(size=32) }}<br>
+        {% for error in form.email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}<br>
+        {% for error in form.password.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
 
-      <label for="email">Email:</label><br>
-      <input type="email" id="email" name="email" required><br>
-      
-      <label for="password">Password:</label><br>
-      <input type="password" id="password" name="password" minlength="6" required><br>
+    <p>
+      {{ form.role.label }}<br>
+      {{ form.role}}<br>
+      {% for error in form.role.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
 
-      <input type="radio" id="student" name="userType" value="Student" required>
-      <label for="Student">Student</label><br>
-      <input type="radio" id="teacher" name="userType" value="Teacher" required>
-      <label for="Teacher">Teacher</label><br>
+    </p>
 
-      <p style="margin: 5px;">Password must be at least 6 characters long.</p>
-      <button type="submit" >Sign Up</button>
-  </form>
+  </br>
 
-  <div id="error">
+    <p>{{ form.submit() }}</p>
+  </form> 
+  
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  {% endwith %}
 
-  </div>
 
   <p style="text-align: center;">Already have an account?</p>
   <div style="text-align: center;">
