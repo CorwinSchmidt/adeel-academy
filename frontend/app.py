@@ -18,14 +18,29 @@ class SignUp(Form):
         validators.DataRequired()])
     role = RadioField('Role', choices=[('Teacher'),('Student')])
     submit = SubmitField('Sign In')
-
-
 class LogIn(Form):
     email = StringField('Email Address', validators=[validators.DataRequired()])
     password = PasswordField('Password', validators=[validators.DataRequired()])
     submit = SubmitField('Log In')
 
+# request template
 
+def req(type, endpoint, data=""):
+
+    if data != "":
+        resp = requests.post("http://127.0.0.1:5000/logincheck" + endpoint, json=data)
+
+        print(resp.status_code, resp.reason, resp.json )
+
+        if resp.status_code == 200:
+            # get loginId from json response
+            json_data = json.loads(resp.text)
+            session["loginId"] = json_data["loginId"]
+            session["role"] = json_data["role"]
+            return redirect(url_for('dashboard'))
+        else:
+            print("error:", resp.status_code, resp.reason)
+            return False
 
 @app.route('/')
 def index():
@@ -34,7 +49,10 @@ def index():
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
 
+    # init form
     form = SignUp(request.form)
+
+    # on post
     if request.method == 'POST' and form.validate():
         print("getting form")
         name = form.name.data
@@ -52,6 +70,7 @@ def sign_up():
         print(resp.status_code, resp.reason, resp.json )
 
         if resp.status_code == 200:
+            print("good response")
             # get loginId from json response
             json_data = json.loads(resp.text)
             session["loginId"] = json_data["loginId"]
@@ -115,12 +134,16 @@ def log_in():
             session["loginId"] = json_data["loginId"]
             session["role"] = json_data["role"]
             return redirect(url_for('dashboard'))
+        else:
+            flash("error logg into your account. try again laster")
+
+
 
     return render_template('log-in.html', form=form)
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    print("redirecting to dashboard, current user is: ", session["userId"])
+    print("redirecting to dashboard, current user is: ", session["loginId"])
     return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"])
 
 
