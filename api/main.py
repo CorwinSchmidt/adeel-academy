@@ -99,13 +99,15 @@ class Student(db.Model):
     connected = db.Column(db.Integer)
     loginId = db.Column(db.Integer, db.ForeignKey('login.loginId'))
 
+
+
     def __repr__(self):
         return "studentId: {}, Name: {}, email: {}, connected: {}, loginId: {}".format(self.courseId, self.name, self.email, self.connected, self.loginId)
     
 
 class StudentSchema(ma.Schema):
     class Meta:
-        fields = ("studentId", "name", "email", "connected", "loginId")
+        fields = ("studentId", "name", "email", "connected", "loginId", "courses")
 
 
 student_schema = StudentSchema()
@@ -175,9 +177,15 @@ class StudentResource(Resource):
         db.session.commit()
         return '', 204
 
+class StudentByLoginId(Resource):
+    def get(self, login_id):
+        student = Student.query.filter_by(loginId=login_id).first()
+        return student_schema.dump(student)
+
 
 api.add_resource(StudentListResource, '/students')
 api.add_resource(StudentResource, '/students/<int:student_id>')
+api.add_resource(StudentByLoginId, '/studentbyloginid/<int:login_id>')
 
 '''
 curl http://localhost:5000/students \
@@ -220,10 +228,14 @@ class StudentCourseListResource(Resource):
         db.session.commit()
         return studentCourse_schema.dump(new_student_course)
 
+
+
+
 class StudentCourseResource(Resource):
-    def get(self, studentCourseId):
-        student_course = StudentCourses.query.get_or_404(studentCourseId)
-        return studentCourse_schema.dump(student_course)
+    def get(self, student_id):
+        student_courses = StudentCourses.query.filter_by(studentId=student_id).all()
+        print("student courses", student_courses)
+        return studentCourses_schema.dump(student_courses)
 
     def patch(self, studentCourseId):
         course = Course.query.get_or_404(studentCourseId)
@@ -244,7 +256,7 @@ class StudentCourseResource(Resource):
 
 
 api.add_resource(StudentCourseListResource, '/studentcourses')
-api.add_resource(StudentCourseResource, '/studentcourses/<int:studentCourseId>')
+api.add_resource(StudentCourseResource, '/studentcourses/<int:student_id>')
 '''
 curl http://localhost:5000/studentcourses \
     -X POST \
@@ -258,7 +270,7 @@ class Teacher(db.Model):
     teacherId = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(50))
     email = db.Column(db.String(50))
-    courses = db.relationship("TeacherCourses")
+    # courses = db.relationship("TeacherCourses")
     connected = db.Column(db.Boolean)
     loginId = db.Column(db.Integer, db.ForeignKey('login.loginId'))
 
@@ -282,8 +294,8 @@ teacher_schema = TeacherSchema()
 
 class TeacherListResource(Resource):
     def get(self):
-        posts = Teacher.query.all()
-        return teacher_schema.dump(posts)
+        teachers = Teacher.query.all()
+        return teachers_schema.dump(teachers)
 
     def post(self):
         connection = False
@@ -336,10 +348,16 @@ class TeacherResource(Resource):
         db.session.delete(teacher)
         db.session.commit()
         return '', 204
+
+class TeacherByLoginId(Resource):
+    def get(self, login_id):
+        teacher = Teacher.query.filter_by(loginId=login_id).first()
+        return teacher_schema.dump(teacher)
     
 # Registering the Endpoints 
 api.add_resource(TeacherListResource, '/teachers')
 api.add_resource(TeacherResource, '/teachers/<int:teacherId>')
+api.add_resource(TeacherByLoginId, '/teacherbyloginid/<int:login_id>')
 
 
 
@@ -378,9 +396,11 @@ class TeacherCourseListResource(Resource):
         return teacherCourse_schema.dump(new_teacher_course)
 
 class TeacherCourseResource(Resource):
-    def get(self, teacherCourseId):
-        teacher_course = TeacherCourses.query.get_or_404(teacherCourseId)
-        return teacherCourse_schema.dump(teacher_course)
+    def get(self, teacher_id):
+        teacher_courses = TeacherCourses.query.filter_by(teacherId=teacher_id).all()
+        print("teacher courses", teacher_courses)
+        return teacherCourses_schema.dump(teacher_courses)
+
 
     def patch(self, teacherCourseId):
         course = Course.query.get_or_404(teacherCourseId)
@@ -401,7 +421,7 @@ class TeacherCourseResource(Resource):
 
 
 api.add_resource(TeacherCourseListResource, '/teachercourses')
-api.add_resource(TeacherCourseResource, '/teachercourses/<int:teacherCourseId>')
+api.add_resource(TeacherCourseResource, '/teachercourses/<int:teacher_id>')
 
 
 

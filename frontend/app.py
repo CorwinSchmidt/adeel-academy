@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
+from requests.api import get
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -25,22 +26,32 @@ class LogIn(Form):
 
 # request template
 
-def req(type, endpoint, data=""):
+def req(type, endpoint, data="", id=""):
 
-    if data != "":
+    if type == "post":
         resp = requests.post("http://127.0.0.1:5000/" + endpoint, json=data)
 
         print(resp.status_code, resp.reason, resp.json )
 
         if resp.status_code == 200:
-            # get loginId from json response
-            json_data = json.loads(resp.text)
-            session["loginId"] = json_data["loginId"]
-            session["role"] = json_data["role"]
-            return redirect(url_for('dashboard'))
+            return json.loads(resp.text)
         else:
             print("error:", resp.status_code, resp.reason)
             return False
+    else:
+        url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
+        print(url)
+        resp = requests.get(url)
+
+        print(resp.status_code, resp.reason, resp.json )
+
+        if resp.status_code == 200:
+            return json.loads(resp.text)
+
+        else:
+            print("error:", resp.status_code, resp.reason)
+            return False
+
 
 @app.route('/')
 def index():
@@ -143,11 +154,42 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+
+    courses = []
+
+    # get courses based on role
+    if session["role"] == "student":
+
+        # get studentId by login and set session
+        request = req("get", "studentbyloginid", id=session["loginId"])
+        try:
+            session["studentId"] = request["studentId"]
+        except Exception as e:
+            print(e)
+        
+        # get courses
+        request = req("get", "studentcourses", id=session["studentId"])
+        for i in request:
+            courses_req = req("get", "courses", id=i["courseId"])
+            courses.append(courses_req)
+    else:
+
+        # get teacherId by login and set session
+        request = req("get", "teacherbyloginid", id=session["loginId"])
+        try:
+            session["teacherId"] = request["teacherId"]
+        except Exception as e:
+            print(e)
+        
+        # get courses
+        request = req("get", "teachercourses", id=session["teacherId"])
+        for i in request:
+            courses_req = req("get", "courses", id=i["courseId"])
+            courses.append(courses_req)
     
+    print(courses)
 
-
-    print("redirecting to dashboard, current user is: ", session["loginId"])
-    return render_template('dashboard.html', courses=[session["loginId"], session["role"], "Math"])
+    return render_template('dashboard.html', courses=courses)
 
 
 @app.route('/inbox', methods=['GET', 'POST'])
