@@ -155,5 +155,9 @@ def inbox():
 def course():
     return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
 
+@app.route('/results', methods=['GET', 'POST'])
+def results():
+    return render_template('search-results.html', results=[('user', 'user1'), ('course', 'course1'), ('course', 'course2'), ('user', 'user2')])
+
 if __name__ == '__main__':
     app.run(port="8000", debug=True)
