@@ -17,7 +17,7 @@ class SignUp(Form):
     password = PasswordField('New Password', [
         validators.DataRequired()])
     role = RadioField('Role', choices=[('Teacher'),('Student')])
-    submit = SubmitField('Sign In')
+    submit = SubmitField('Sign Up')
 class LogIn(Form):
     email = StringField('Email Address', validators=[validators.DataRequired()])
     password = PasswordField('Password', validators=[validators.DataRequired()])
