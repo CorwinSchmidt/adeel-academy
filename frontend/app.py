@@ -28,7 +28,7 @@ class LogIn(Form):
 def req(type, endpoint, data=""):
 
     if data != "":
-        resp = requests.post("http://127.0.0.1:5000/logincheck" + endpoint, json=data)
+        resp = requests.post("http://127.0.0.1:5000/" + endpoint, json=data)
 
         print(resp.status_code, resp.reason, resp.json )
 
@@ -143,8 +143,11 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    
+
+
     print("redirecting to dashboard, current user is: ", session["loginId"])
-    return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"])
+    return render_template('dashboard.html', courses=[session["loginId"], session["role"], "Math"])
 
 
 @app.route('/inbox', methods=['GET', 'POST'])

@@ -99,8 +99,6 @@ class Student(db.Model):
     connected = db.Column(db.Integer)
     loginId = db.Column(db.Integer, db.ForeignKey('login.loginId'))
 
-
-
     def __repr__(self):
         return "studentId: {}, Name: {}, email: {}, connected: {}, loginId: {}".format(self.courseId, self.name, self.email, self.connected, self.loginId)
     
