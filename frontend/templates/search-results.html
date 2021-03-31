@@ -5,6 +5,37 @@
 {% endblock %}
 
 {% block body %}
-    <!-- Display User Results -->
-    <!-- Display Course Results -->
+    <div class="container">
+        <!-- Display User Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#usersCollapse" role="button" aria-expanded="false" aria-controls="usersCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                User Results
+            </a>
+        </p>
+        <div class="collapse" id="usersCollapse">
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item">
+                  <p>{{ user }}</p>
+                </li>
+                {% endfor %}
+              </ul>
+        </div>
+
+        <!-- Display Course Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#coursesCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                Course Results
+            </a>
+        </p>
+        <div class="collapse" id="coursesCollapse">
+            <ul class="list-group">
+                {% for course in courses %}
+                <li class="list-group-item">
+                  <p>{{ course }}</p>
+                </li>
+                {% endfor %}
+              </ul>
+        </div>
+    </div>
 {% endblock %}
