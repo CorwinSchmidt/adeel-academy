@@ -146,7 +146,7 @@ def log_in():
             session["role"] = json_data["role"]
             return redirect(url_for('dashboard'))
         else:
-            flash("error logg into your account. try again laster")
+            flash("That email address is already in use. ")
 
 
 
