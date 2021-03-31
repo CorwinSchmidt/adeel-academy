@@ -39,7 +39,9 @@
           <ul class="list-group">
             {% for assignment in courseAssignments %}
             <li class="list-group-item">
-              <a href="/course/{{ courseId }}/{{ moduleId }}" style="color: black;">{{ assignment }}</a>
+              <!-- Link should be changed according to however we decide
+                  to handle assignments -->
+              <a href="#" style="color: black;">{{ assignment }}</a>
             </li>
             {% endfor %}
           </ul>

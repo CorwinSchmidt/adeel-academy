@@ -32,7 +32,7 @@
             <ul class="list-group">
                 {% for course in courses %}
                 <li class="list-group-item">
-                  <p>{{ course }}</p>
+                    <a href="/course/{{ courseId }}/home" style="color: black;">{{ course }}</a>
                 </li>
                 {% endfor %}
               </ul>
