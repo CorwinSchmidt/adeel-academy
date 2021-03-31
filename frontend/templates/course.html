@@ -5,10 +5,40 @@
 {% endblock %}
 
 {% block body %}
-    <!-- Display Course Details -->
-    <div class="row" style="margin-top: 1rem;">
-        <h5>{{courseName}}</h5>
-        <p>{{courseDesc}}</p>
+    <div class="container" >
+      <div class="row" style="margin-top: 1rem; border-bottom: 2px solid black; text-align: center;">
+        <h6 style="font-size: 1.5rem;">{{courseName}}</h6>
+      </div>
+      <div class="row" style="margin-top: 1rem;">
+        <div class="col-2">
+          <!-- Modules -->
+          <p style="text-align: center; font-size: 1rem;">Modules</p>
+          <ul class="list-group">
+            {% for module in courseModules %}
+            <li class="list-group-item">
+              <a href="/course/{{ courseId }}/{{ moduleId }}" style="color: black;">{{ module }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-8" style="border-left: 1px solid black; border-right: 1px solid black;">
+          {% if home %}
+            <p style="text-align: center;">{{courseDesc}}</p>
+          {% else %}
+            <!-- Display selected module's data -->
+          {% endif %}
+        </div>
+        <div class="col-2">
+          <!-- Assignments -->
+          <p style="text-align: center; font-size: 1rem;">Assignments</p>
+          <ul class="list-group">
+            {% for assignment in courseAssignments %}
+            <li class="list-group-item">
+              <a href="/course/{{ courseId }}/{{ moduleId }}" style="color: black;">{{ assignment }}</a>
+            </li>
+            {% endfor %}
+        </div>
+      </div>
     </div>
 
 {% endblock %}

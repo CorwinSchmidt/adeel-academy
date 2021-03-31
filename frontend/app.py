@@ -207,9 +207,22 @@ def courses():
     return render_template('all-courses.html')
 
 # Displays a single course and its information
-@app.route('/course', methods=['GET', 'POST'])
-def course():
-    return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
+@app.route('/course/<courseId>/<moduleId>', methods=['GET', 'POST'])
+def course(courseId, moduleId):
+    # Get course by id, pass to render template
+
+    if moduleId == 'home':
+        home = True
+    else:
+        # Get module by id, pass to render template
+        home = False
+
+    # This should be near-usable once queries are implemented:
+    # return render_template('course.html', courseToDisplay=course, moduleToDisplay, home)
+
+    # This is temporary, for design purposes:
+    return render_template('course.html', courseId=courseId, courseName= "Example Course", courseDesc = "This is an example description for a course.", 
+            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'], home=home)
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])
