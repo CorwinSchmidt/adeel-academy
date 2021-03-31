@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
+from requests.api import get
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -25,22 +26,32 @@ class LogIn(Form):
 
 # request template
 
-def req(type, endpoint, data=""):
+def req(type, endpoint, data="", id=""):
 
-    if data != "":
-        resp = requests.post("http://127.0.0.1:5000/logincheck" + endpoint, json=data)
+    if type == "post":
+        resp = requests.post("http://127.0.0.1:5000/" + endpoint, json=data)
 
         print(resp.status_code, resp.reason, resp.json )
 
         if resp.status_code == 200:
-            # get loginId from json response
-            json_data = json.loads(resp.text)
-            session["loginId"] = json_data["loginId"]
-            session["role"] = json_data["role"]
-            return redirect(url_for('dashboard'))
+            return json.loads(resp.text)
         else:
             print("error:", resp.status_code, resp.reason)
             return False
+    else:
+        url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
+        print(url)
+        resp = requests.get(url)
+
+        print(resp.status_code, resp.reason, resp.json )
+
+        if resp.status_code == 200:
+            return json.loads(resp.text)
+
+        else:
+            print("error:", resp.status_code, resp.reason)
+            return False
+
 
 @app.route('/')
 def index():
@@ -98,10 +109,10 @@ def sign_up():
 
                 return redirect(url_for('dashboard'))
             else:
-                flash("error creating your account. try again laster")
+                flash("There was an error creating your account. Please try again later.")
                 
         else:
-            flash("error creating your account.")
+            flash("There was an error creating your account. Please try again later.")
 
 
         # return redirect(url_for('log-in'))
@@ -135,7 +146,7 @@ def log_in():
             session["role"] = json_data["role"]
             return redirect(url_for('dashboard'))
         else:
-            flash("error logg into your account. try again laster")
+            flash("There was an error logging into your account. Please try again later.")
 
 
 
@@ -143,21 +154,92 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    print("redirecting to dashboard, current user is: ", session["loginId"])
-    return render_template('dashboard.html', courses=[session["loginId"], "Physics", "Math"])
 
+    courses = []
 
+    # get courses based on role
+    if session["role"] == "student":
+
+        # get studentId by login and set session
+        request = req("get", "studentbyloginid", id=session["loginId"])
+        try:
+            session["studentId"] = request["studentId"]
+        except Exception as e:
+            print(e)
+        
+        # get courses
+        request = req("get", "studentcourses", id=session["studentId"])
+        for i in request:
+            courses_req = req("get", "courses", id=i["courseId"])
+            courses.append(courses_req)
+    else:
+
+        # get teacherId by login and set session
+        request = req("get", "teacherbyloginid", id=session["loginId"])
+        try:
+            session["teacherId"] = request["teacherId"]
+        except Exception as e:
+            print(e)
+        
+        # get courses
+        request = req("get", "teachercourses", id=session["teacherId"])
+        for i in request:
+            courses_req = req("get", "courses", id=i["courseId"])
+            courses.append(courses_req)
+    
+    print(courses)
+
+    return render_template('dashboard.html', courses=courses)
+
+# Displays a static contact page for support
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+# Displays a user's chats and the messages therein
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
     return render_template('inbox.html', chats = ["Maria", "Joe", "Frank"])
 
-@app.route('/course', methods=['GET', 'POST'])
-def course():
-    return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
+# Displays all courses, along with a search bar + allows teachers to create a course
+@app.route('/all-courses', methods=['GET', 'POST'])
+def courses():
+    return render_template('all-courses.html')
 
+# Displays a single course and its information
+@app.route('/course/<courseId>/<moduleId>', methods=['GET', 'POST'])
+def course(courseId, moduleId):
+    # Get course by id, pass to render template
+
+    if moduleId == 'home':
+        home = True
+    else:
+        # Get module by id, pass to render template
+        home = False
+
+    # This should be near-usable once queries are implemented:
+    # return render_template('course.html', courseToDisplay=course, moduleToDisplay, home)
+
+    # This is temporary, for design purposes:
+    return render_template('course.html', courseId=courseId, courseName= "Example Course", courseDesc = "This is an example description for a course.", 
+            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'], home=home)
+
+# Displays a student's assignments
+@app.route('/student-assignments', methods=['GET', 'POST'])
+def studentAssignments():
+    return render_template('student-assignments.html')
+
+# Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    return render_template('search-results.html', results=[('user', 'user1'), ('course', 'course1'), ('course', 'course2'), ('user', 'user2')])
+    # need to get users and courses that match input in search bar
+    return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
+
+# Logs the user out
+@app.route('/log-out', methods=['GET', 'POST'])
+def logOut():
+    session.clear()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(port="8000", debug=True)

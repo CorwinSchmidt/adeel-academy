@@ -1,27 +1,10 @@
 {% extends "base.html" %}
 
 {% block header %}
-<title>Adeel Academy | Home</title>
+<title>Home</title>
 {% endblock %}
 
 {% block body %}
-  <!-- Header -->
-  <header class="header">
-    <nav class="flex flex-jc-sb flex-ai-c">
-      <a href="/" class="header__logo">
-        <img src="{{url_for('static', filename='images/logo.webp')}}">
-      </a>
-
-      <div class="flex flex-ai-c">
-        <a href="{{ url_for('log_in') }}" class="button header__cta">Log In</a>
-
-        <div class="header__links ">
-          <a href="{{ url_for('sign_up') }}">Sign Up</a>
-          <a href="{{ url_for('dashboard') }}">Dashboard (TEMP)</a>
-        </div>
-      </div>
-    </nav>
-  </header>
 
   <!-- Text -->
   <h1 class="flex flex-jc-c flex-ai-c">Adeel Academy</h1>

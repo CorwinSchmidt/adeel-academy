@@ -1,35 +1,52 @@
-{% extends "base.html" %}
+{% extends "base-logged-in.html" %}
 
 {% block header %}
-<title>Adeel Academy | Course</title>
+<title>{{courseName}}</title>
 {% endblock %}
 
 {% block body %}
+    <div class="container" >
+      <div class="row" style="margin-top: 1rem; border-bottom: 2px solid black; text-align: center;">
+        <h6 style="font-size: 1.5rem;">{{courseName}}</h6>
+      </div>
+      <div class="row" style="margin-top: 1rem;">
+        <div class="col-2">
 
-    <!-- Bootstrap Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ab1b23;">
-        <div class="container-fluid">
-          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('inbox') }}">Inbox</a>
-              </li>
-            </ul>
-            <form class="d-flex">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit" style="color: white;">Search</button>
-            </form>
-          </div>
+          <!-- Modules -->
+          <p style="text-align: center; font-size: 1rem;">Modules</p>
+          <ul class="list-group">
+            {% for module in courseModules %}
+            <li class="list-group-item">
+              <a href="/course/{{ courseId }}/{{ moduleId }}" style="color: black;">{{ module }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+
         </div>
-    </nav>
 
-    <!-- Display Course Details -->
-    <div class="container" style="margin-top: 1rem;">
-        <h5>{{courseName}}</h5>
-        <p>{{courseDesc}}</p>
+        <div class="col-8" style="border-left: 1px solid black; border-right: 1px solid black;">
+          {% if home %}
+            <p style="text-align: center;">{{courseDesc}}</p>
+          {% else %}
+            <!-- Display selected module's data -->
+          {% endif %}
+        </div>
+        
+        <div class="col-2">
+
+          <!-- Assignments -->
+          <p style="text-align: center; font-size: 1rem;">Assignments</p>
+          <ul class="list-group">
+            {% for assignment in courseAssignments %}
+            <li class="list-group-item">
+              <!-- Link should be changed according to however we decide
+                  to handle assignments -->
+              <a href="#" style="color: black;">{{ assignment }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
 
 {% endblock %}

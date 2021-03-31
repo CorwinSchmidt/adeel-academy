@@ -1,27 +1,41 @@
-{% extends "base.html" %}
+{% extends "base-logged-in.html" %}
 
 {% block header %}
-<title>Adeel Academy | Results</title>
+<title>Search Results</title>
 {% endblock %}
 
 {% block body %}
-    <!-- Bootstrap Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ab1b23;">
-        <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+    <div class="container">
+        <!-- Display User Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#usersCollapse" role="button" aria-expanded="false" aria-controls="usersCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                User Results
+            </a>
+        </p>
+        <div class="collapse" id="usersCollapse">
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item">
+                  <p>{{ user }}</p>
                 </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('inbox') }}">Inbox</a>
-            </li>
-            </ul>
-            <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit" style="color: white;">Search</button>
-            </form>
+                {% endfor %}
+              </ul>
         </div>
+
+        <!-- Display Course Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#coursesCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                Course Results
+            </a>
+        </p>
+        <div class="collapse" id="coursesCollapse">
+            <ul class="list-group">
+                {% for course in courses %}
+                <li class="list-group-item">
+                    <a href="/course/{{ courseId }}/home" style="color: black;">{{ course }}</a>
+                </li>
+                {% endfor %}
+              </ul>
         </div>
-    </nav>
+    </div>
 {% endblock %}
