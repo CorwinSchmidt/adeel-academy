@@ -5,59 +5,54 @@
 {% endblock %}
 
 {% block body %}        
-  <!-- User Input -->
-  <form action="" method="post" novalidate>
-    <p>
-      {{ form.name.label }}<br>
-      {{ form.name(size=32) }}<br>
-      {% for error in form.name.errors %}
-      <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-
-    <p>
-        {{ form.email.label }}<br>
-        {{ form.email(size=32) }}<br>
-        {% for error in form.email.errors %}
+  <div class="container">
+    <!-- User Input -->
+    <form action="" method="post" novalidate>
+      <p>
+        {{ form.name.label }}<br>
+        {{ form.name(size=32) }}<br>
+        {% for error in form.name.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(size=32) }}<br>
-        {% for error in form.password.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+      </p>
+      <p>
+          {{ form.email.label }}<br>
+          {{ form.email(size=32) }}<br>
+          {% for error in form.email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>
+          {{ form.password.label }}<br>
+          {{ form.password(size=32) }}<br>
+          {% for error in form.password.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>
+        {{ form.role.label }}<br>
+        {{ form.role}}<br>
+        {% for error in form.role.errors %}
+          <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-    </p>
-
-    <p>
-      {{ form.role.label }}<br>
-      {{ form.role}}<br>
-      {% for error in form.role.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+      </p>
+    </br>
+      <p>{{ form.submit() }}</p>
+    </form>
+    
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
       {% endfor %}
-
-    </p>
-
-  </br>
-
-    <p>{{ form.submit() }}</p>
-  </form> 
-  
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  {% endwith %}
-
-
-  <p style="text-align: center;">Already have an account?</p>
-  <div style="text-align: center;">
-      <a href="{{ url_for('log_in') }}" style="color: blue;">Log In</a>
+      </ul>
+    {% endif %}
+    {% endwith %}
+    <p style="text-align: center;">Already have an account?</p>
+    <div style="text-align: center;">
+        <a href="{{ url_for('log_in') }}" style="color: blue;">Log In</a>
+    </div>
   </div>
 
   <script src="{{url_for('static', filename='js/sign-up.js')}}"></script>
