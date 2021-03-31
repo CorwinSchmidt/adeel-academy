@@ -6,8 +6,34 @@
 
 {% block body %}
 
-  <!-- Text -->
-  <h1 class="flex flex-jc-c flex-ai-c">Adeel Academy</h1>
-  <p class="flex flex-jc-c flex-ai-c">A learning platform for students and teachers.</p>
+  <div class="container">
+    <div class="row align-items-center" style="margin-top: 3rem; margin-bottom: 3rem;">
+      <div class="col-5" style="text-align: center;">
+        <!-- Text 1 -->
+        <p style="font-size: 2rem; font-weight: 800;">Adeel Academy</p>
+        <p>A learning platform with all of the functionality required to host course material, 
+            post or complete assignments, and communicate with fellow learners—with no extra fat.</p>
+      </div>
+      <div class="col-7" style="text-align: right;">
+        <!-- Image 1 -->
+        <img src="{{url_for('static', filename='images/woman-headphones-612x407.jpg')}}" alt="Woman wearing headphones" style="max-width: 100%; height: auto;">
+      </div>
+    </div>
+    <div class="row align-items-center">
+      <div class="col-7" style="text-align: center;">
+        <!-- Image 2 -->
+        <img src="{{url_for('static', filename='images/computer-duo-1024x574.jpg')}}" alt="Duo using computer" style="max-width: 100%; height: auto;">
+      </div>
+      <div class="col-5" style="text-align: center;">
+          <!-- Text 2 -->
+          <p style="font-size: 2rem; font-weight: 800;">A streamlined learning experience.</p>
+          <p>
+            Adeel Academy wasn't designed to replace videoconferencing apps or distract learners with 
+            complicated bells and whistles. It was designed to make it as easy as possible to create 
+            a cohesive course page, view and complete assignments, and get help from peers and instructors.
+          </p>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}

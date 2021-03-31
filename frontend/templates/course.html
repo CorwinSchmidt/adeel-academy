@@ -11,6 +11,7 @@
       </div>
       <div class="row" style="margin-top: 1rem;">
         <div class="col-2">
+
           <!-- Modules -->
           <p style="text-align: center; font-size: 1rem;">Modules</p>
           <ul class="list-group">
@@ -20,7 +21,9 @@
             </li>
             {% endfor %}
           </ul>
+
         </div>
+
         <div class="col-8" style="border-left: 1px solid black; border-right: 1px solid black;">
           {% if home %}
             <p style="text-align: center;">{{courseDesc}}</p>
@@ -28,15 +31,20 @@
             <!-- Display selected module's data -->
           {% endif %}
         </div>
+        
         <div class="col-2">
+
           <!-- Assignments -->
           <p style="text-align: center; font-size: 1rem;">Assignments</p>
           <ul class="list-group">
             {% for assignment in courseAssignments %}
             <li class="list-group-item">
-              <a href="/course/{{ courseId }}/{{ moduleId }}" style="color: black;">{{ assignment }}</a>
+              <!-- Link should be changed according to however we decide
+                  to handle assignments -->
+              <a href="#" style="color: black;">{{ assignment }}</a>
             </li>
             {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
