@@ -109,10 +109,10 @@ def sign_up():
 
                 return redirect(url_for('dashboard'))
             else:
-                flash("error creating your account. try again laster")
+                flash("There was an error creating your account. Please try again later.")
                 
         else:
-            flash("error creating your account.")
+            flash("There was an error creating your account. Please try again later.")
 
 
         # return redirect(url_for('log-in'))
@@ -146,7 +146,7 @@ def log_in():
             session["role"] = json_data["role"]
             return redirect(url_for('dashboard'))
         else:
-            flash("error logg into your account. try again laster")
+            flash("There was an error logging into your account. Please try again later.")
 
 
 
@@ -191,18 +191,42 @@ def dashboard():
 
     return render_template('dashboard.html', courses=courses)
 
+# Displays a static contact page for support
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
+# Displays a user's chats and the messages therein
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
     return render_template('inbox.html', chats = ["Maria", "Joe", "Frank"])
 
+# Displays all courses, along with a search bar + allows teachers to create a course
+@app.route('/all-courses', methods=['GET', 'POST'])
+def courses():
+    return render_template('all-courses.html')
+
+# Displays a single course and its information
 @app.route('/course', methods=['GET', 'POST'])
 def course():
     return render_template('course.html', courseName= "Example Course", courseDesc = "This is an example description for a course.")
 
+# Displays a student's assignments
+@app.route('/student-assignments', methods=['GET', 'POST'])
+def studentAssignments():
+    return render_template('student-assignments.html')
+
+# Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    return render_template('search-results.html', results=[('user', 'user1'), ('course', 'course1'), ('course', 'course2'), ('user', 'user2')])
+    # need to get users and courses that match input in search bar
+    return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
+
+# Logs the user out
+@app.route('/log-out', methods=['GET', 'POST'])
+def logOut():
+    session.clear()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(port="8000", debug=True)

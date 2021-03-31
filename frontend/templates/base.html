@@ -11,16 +11,39 @@
   <link rel="stylesheet" href="{{ url_for('static',filename='styles/style.css') }}">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-
-  <title>Adeel Academy</title>
   {% block header %}{% endblock %}
 
 </head>
 
 <body>
-    
-    {% block body %}{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+  <!-- Bootstrap Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ab1b23; padding: 1rem;">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <a href="/" class="header__logo">
+          <img src="{{url_for('static', filename='images/logo.webp')}}">
+        </a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link"  href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+          </li>
+        </ul>
+        <div class="flex flex-ai-c">
+          <a href="{{ url_for('log_in') }}" class="button header__cta">Log In</a>
+  
+          <div class="header__links ">
+            <a href="{{ url_for('sign_up') }}">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  {% block body %}{% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>
 
 </html>
