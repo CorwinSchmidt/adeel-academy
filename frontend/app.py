@@ -188,7 +188,6 @@ def courses():
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])
 def course(courseId):
-    # Get course by id, pass to render template
 
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
@@ -221,10 +220,6 @@ def course(courseId):
         print(request)
         # get courses
 
-
-  
-
-
     # This is temporary, for design purposes:
     return render_template('course.html', courseId=courseId, courseName= name, courseDesc=description, 
             courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'])
@@ -232,7 +227,20 @@ def course(courseId):
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])
 def studentAssignments():
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+    
     return render_template('student-assignments.html')
+
+# Displays an assignment
+@app.route('/assignment/<assignmentId>')
+def assignment(assignmentId):
+    request = req("get", "courses", id=courseId)
+    request.name = 'Example Assignment Name'
+    request.description = 'Example assignment description. Blah blah blah blah blah'
+    request.dueTime = 1
+    return render_template('assignment.html', assignment = request)
 
 # Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])

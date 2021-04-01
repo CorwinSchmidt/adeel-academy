@@ -12,10 +12,12 @@
       <div class="row">
         {% for course in courses %}
           <div class="card" style="width: 18rem; margin: 1rem;">
-            <img src="/static/images/logo.webp" class="card-img-top" style="margin-top: 1rem;"></img>
+            <a href="">
+              <img src="/static/images/logo.webp" class="card-img-top" style="margin-top: 1rem;">
+            </a>
             <div class="card-body">
-              <h5 class="card-title">{{ course.name }}</h5>
-              <p class="card-text" style="height: 4rem;">{{ course.description }}</p>
+              <h5 class="card-title">{{ course.name[:20] }}</h5>
+              <p class="card-text" style="height: 4rem;">{{ course.description[:30] }}</p>
               <!-- Somehow need to get the correct course ID and get it to course() -->
               <a href="/course/{{ course.courseId }}" class="btn btn-primary">View Course</a>
             </div>
