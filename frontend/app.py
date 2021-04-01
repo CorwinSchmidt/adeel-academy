@@ -226,7 +226,7 @@ def course(courseId):
 
 
     # This is temporary, for design purposes:
-    return render_template('course.html', courseId=courseId, courseName= name, courseDesc=description, 
+    return render_template('course.html', courseId=courseId, courseName=name, courseDesc=description, 
             courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'])
 
 # Displays a student's assignments
