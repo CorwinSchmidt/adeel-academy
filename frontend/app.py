@@ -4,6 +4,7 @@ from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
 import json
+from req import req
 
 
 app = Flask(__name__)
@@ -25,32 +26,6 @@ class LogIn(Form):
     submit = SubmitField('Log In')
 
 # request template
-
-def req(type, endpoint, data="", id=""):
-
-    if type == "post":
-        resp = requests.post("http://127.0.0.1:5000/" + endpoint, json=data)
-
-        print(resp.status_code, resp.reason, resp.json )
-
-        if resp.status_code == 200:
-            return json.loads(resp.text)
-        else:
-            print("error:", resp.status_code, resp.reason)
-            return False
-    else:
-        url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
-        print(url)
-        resp = requests.get(url)
-
-        print(resp.status_code, resp.reason, resp.json )
-
-        if resp.status_code == 200:
-            return json.loads(resp.text)
-
-        else:
-            print("error:", resp.status_code, resp.reason)
-            return False
 
 
 @app.route('/')
@@ -155,6 +130,10 @@ def log_in():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
 
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
     courses = []
 
     # get courses based on role
@@ -167,7 +146,7 @@ def dashboard():
         except Exception as e:
             print(e)
         
-        # get courses
+        # get courses by studentId
         request = req("get", "studentcourses", id=session["studentId"])
         for i in request:
             courses_req = req("get", "courses", id=i["courseId"])
@@ -207,22 +186,48 @@ def courses():
     return render_template('all-courses.html')
 
 # Displays a single course and its information
-@app.route('/course/<courseId>/<moduleId>', methods=['GET', 'POST'])
-def course(courseId, moduleId):
+@app.route('/course/<courseId>', methods=['GET', 'POST'])
+def course(courseId):
     # Get course by id, pass to render template
 
-    if moduleId == 'home':
-        home = True
-    else:
-        # Get module by id, pass to render template
-        home = False
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
 
-    # This should be near-usable once queries are implemented:
-    # return render_template('course.html', courseToDisplay=course, moduleToDisplay, home)
+    modules = []
+    assignments = []
+    name = ""
+    description=""
+
+    print(session["role"])
+    # get courses based on role
+    if session["role"] == "student":
+        print("fdsa")
+        # get studentId by login and set session
+        # request = req("get", "course", id=courseId)
+
+        # get courses
+    else:
+        print("fdsa")
+        # get studentId by login and set session
+        print(courseId)
+        request = req("get", "courses", id=courseId)
+        name = request["name"]
+        description = request["description"]
+        print("lok", description)
+        modules = request["modules"]
+        # assignments = request["assignments"] # not added yet
+
+        print(request)
+        # get courses
+
+
+  
+
 
     # This is temporary, for design purposes:
-    return render_template('course.html', courseId=courseId, courseName= "Example Course", courseDesc = "This is an example description for a course.", 
-            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'], home=home)
+    return render_template('course.html', courseId=courseId, courseName= name, courseDesc=description, 
+            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'])
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])

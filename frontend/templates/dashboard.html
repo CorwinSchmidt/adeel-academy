@@ -17,7 +17,7 @@
               <h5 class="card-title">{{ course.name }}</h5>
               <p class="card-text" style="height: 4rem;">{{ course.description }}</p>
               <!-- Somehow need to get the correct course ID and get it to course() -->
-              <a href="/course/{{ course.courseId }}/home" class="btn btn-primary">View Course</a>
+              <a href="/course/{{ course.courseId }}" class="btn btn-primary">View Course</a>
             </div>
           </div>
         {% endfor %}
