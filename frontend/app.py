@@ -146,7 +146,7 @@ def dashboard():
         except Exception as e:
             print(e)
         
-        # get courses
+        # get courses by studentId
         request = req("get", "studentcourses", id=session["studentId"])
         for i in request:
             courses_req = req("get", "courses", id=i["courseId"])
