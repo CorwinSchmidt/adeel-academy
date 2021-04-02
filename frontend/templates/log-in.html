@@ -25,6 +25,7 @@
     </br>
       <p>{{ form.submit() }}</p>
     </form>
+
     
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -40,6 +41,7 @@
         <a href="{{ url_for('sign_up') }}" style="color: blue;">Sign Up</a>
     </div>
   </div>
+  <p>TEMP: user that has courses populated: 928s@gmail.com</p>
 
 
   <script src="{{url_for('static', filename='js/log-in.js')}}"></script>
