@@ -157,7 +157,7 @@ class StudentResource(Resource):
     def patch(self, student_id):
         student = Student.query.get_or_404(student_id)
 
-        if 'studetnId' in request.json:
+        if 'studentId' in request.json:
             student.variable = request.json['variable']
         if 'name' in request.json:
             student.name = request.json['name']
