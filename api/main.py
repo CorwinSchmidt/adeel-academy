@@ -157,7 +157,7 @@ class StudentResource(Resource):
     def patch(self, student_id):
         student = Student.query.get_or_404(student_id)
 
-        if 'studetnId' in request.json:
+        if 'studentId' in request.json:
             student.variable = request.json['variable']
         if 'name' in request.json:
             student.name = request.json['name']
@@ -588,6 +588,183 @@ class ModuleResource(Resource):
 # Register the Endpoints
 api.add_resource(ModuleListResource, '/module')
 api.add_resource(ModuleResource, '/module/<int:moduleId>')
+
+
+# MODULE DOCUMENTS  
+class ModuleDocuments(db.Model):
+
+    __tablename__ = 'moduleDocuments'
+    
+    moduleId = db.Column(db.Integer, primary_key = 50)
+    name = db.Column(db.String(50))
+    description = db.Column(db.String(50))
+    documents = db.relationship("Document")
+
+
+    def __repr__(self):
+        return "<Module Id: {}, Name: {}, Description: {}, documents: {}>"
+
+# Marshmallow Schema
+class ModuleDocumentSchema(ma.Schema):
+
+    class Meta:
+        fields = ("moduleId","name", "description", "documents")
+
+# Schema for Multiple Module Documents
+moduleDocuments_schema = ModuleDocumentSchema(many = True)
+
+# Schema for Single Module Document
+moduleDocument_schema = ModuleDocumentSchema()
+
+# Endpoint for a List of Module Documents
+class ModuleDocumentListResource(Resource):
+    def get(self):
+
+        posts = ModuleDocuments.query.all()
+        # Dump is the Conversion from JSON to String
+        return moduleDocuments_schema.dump(posts)
+
+    def post(self):
+        newDocModule = ModuleDocuments(
+            moduleId = request.json['moduleId'],
+            name = request.json['name'],
+            description = request.json['description'],
+            courseId = request.json['courseId'],
+        )
+
+        db.session.add(newDocModule)
+        db.session.commit()
+        return module_schema.dump(newDocModule)
+
+
+# Endpoint for the Single Module Document, given the Module Id
+class ModuleDocumentResource(Resource):
+    def get(self, moduleDocId):
+        moduleDoc = ModuleDocuments.query.get_or_404(moduleDocId)
+        return moduleDocument_schema.dump(moduleDoc)
+
+
+    def patch(self, moduleDocId):
+        moduleDoc = ModuleDocuments.query.get_or_404(moduleDocId)
+
+        if 'moduleId' in request.json['moduleId']:
+            moduleDoc.moduleId = request.json['moduleId']
+
+        if 'name' in request.json['name']:
+            moduleDoc.name = request.json['name']
+
+        if 'description' in request.json['description']:
+            moduleDoc.description = request.json['description']
+
+        db.session.commit()
+        return moduleDocument_schema.dump(moduleDoc)
+
+
+    def delete(self, moduleDocId):
+        moduleDoc = ModuleDocuments.query.get_or_404(moduleDocId)
+        db.session.delete(moduleDoc)
+        db.session.commit()
+        return '', 204
+
+
+
+# Register the Endpoints
+api.add_resource(ModuleDocumentListResource, '/moduleDocuments')
+api.add_resource(ModuleDocumentResource, '/moduleDocuments/<int:moduleId>')
+
+# MODULE ASSIGNMENT
+class ModuleAssignment(db.Model):
+
+    __tablename__ = 'moduleAssignments'
+    
+    moduleId = db.Column(db.Integer, primary_key = 50)
+    name = db.Column(db.String(50))
+    description = db.Column(db.String(50))
+    courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
+    assignments = db.relationship("CourseAssignment")
+
+    def __repr__(self):
+        return "<Module Id: {}, Name: {}, Description: {}, CourseId: {}, assignments: {}>".format(self.moduleId, self.name, self.description, self.courseId, self.documents, self.assignments)
+
+
+# Marshmallow Schema
+class ModuleAssignmentSchema(ma.Schema):
+
+
+    class Meta:
+        fields = ("moduleId","name", "description", "courseId", "courseAssignments")
+
+# Schema for Multiple Module Assignments
+moduleAssignments_schema = ModuleAssignmentSchema(many = True)
+
+# Schema for Single Module Assignment
+moduleAssignment_schema = ModuleAssignmentSchema()
+
+# Endpoint for a List of Module Assignments
+class ModuleAssignmentListResource(Resource):
+    def get(self):
+
+        posts = ModuleAssignment.query.all()
+        # Dump is the Conversion from JSON to String
+        return moduleAssignments_schema.dump(posts)
+
+    def post(self):
+        newModuleAssignment = ModuleAssignment(
+            moduleId = request.json['moduleId'],
+            name = request.json['name'],
+            description = request.json['description'],
+            courseId = request.json['courseId'],
+            assignments = request.json['assignment']
+        )
+
+        db.session.add(newModuleAssignment)
+        db.session.commit()
+        return moduleAssignment_schema.dump(newModuleAssignment)
+
+
+# Endpoint for the Single Module Assignment, given the Module Id
+class ModuleAssignmentResource(Resource):
+    def get(self, moduleAssignmentId):
+        moduleAss = ModuleAssignment.query.get_or_404(moduleAssignmentId)
+        return moduleAssignment_schema.dump(moduleAss)
+
+
+    def patch(self, moduleAssId):
+        module = ModuleAssignment.query.get_or_404(moduleAssId)
+
+        if 'moduleId' in request.json['moduleId']:
+            module.moduleId = request.json['moduleId']
+
+        if 'name' in request.json['name']:
+            module.name = request.json['name']
+
+        if 'description' in request.json['description']:
+            module.description = request.json['description']
+
+        if 'courseId' in request.json['courseId']:
+
+            module.courseId = request.json['courseId']
+
+        if 'assignment' in request.json['assignment']:
+
+            module.assignment = request.json['assignment']
+
+        db.session.commit()
+        return moduleAssignment_schema.dump(module)
+
+
+    def delete(self, moduleId):
+        module = ModuleAssignment.query.get_or_404(moduleId)
+        db.session.delete(module)
+        db.session.commit()
+        return '', 204
+
+
+
+# Register the Endpoints
+api.add_resource(ModuleAssignmentListResource, '/moduleAssignments')
+api.add_resource(ModuleAssignmentResource, '/moduleAssignments/<int:moduleId>')
+
 
 
 # DOCUMENT

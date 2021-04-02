@@ -240,6 +240,45 @@ def results():
     # need to get users and courses that match input in search bar
     return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
 
+
+# Displays the Module Documents of a Given Course  
+@app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
+def moduleDocuments(courseId, moduleId):
+    
+    modules = []
+
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+        
+    request = req('GET', "courses", id = courseId)
+
+    for r in request:
+
+        request_docs = req("GET", "moduleDocuments", id = moduleId)   
+        modules.append(request_docs)
+
+
+    return render_template('course.html', modules = modules)
+
+# Displays the Module Assignments of a Given Course  
+@app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
+def moduleAssignments(courseId, moduleId):
+    
+    modules = []
+
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+        
+    request = req('GET', "courses", id = courseId)
+
+    for r in request:
+
+        request_docs = req("GET", "moduleAssignments", id = moduleId)   
+        modules.append(request_docs)
+
+
+    return render_template('course.html', modules = modules)
+
 # Logs the user out
 @app.route('/log-out', methods=['GET', 'POST'])
 def logOut():
