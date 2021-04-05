@@ -199,35 +199,36 @@ def course(courseId):
     name = ""
     description=""
 
-    print(session["role"])
-    # get courses based on role
-    if session["role"] == "student":
-        print("fdsa")
-        # get studentId by login and set session
-        # request = req("get", "course", id=courseId)
+    # get course information
+    request = req("get", "courses", id=courseId)
+    name = request["name"]
+    description = request["description"]
 
-        # get courses
-    else:
-        print("fdsa")
-        # get studentId by login and set session
-        print(courseId)
-        request = req("get", "courses", id=courseId)
-        name = request["name"]
-        description = request["description"]
-        print("lok", description)
-        modules = request["modules"]
-        # assignments = request["assignments"] # not added yet
+    # get modules
+    request = req("get", "coursemodules", id=courseId)
 
-        print(request)
-        # get courses
+    for i in request:
+        module = req("get", "modules", id=i["moduleId"])
+        modules.append([module["moduleId"], module["name"]])
 
 
-  
+    # get modules
+    request = req("get", "assignmentsbycourse", id=courseId)
+
+    for i in request:
+        print(module)
+        assignments.append([i["courseAssignmentId"], i["name"]])
+
+    print("assignments", assignments)
+
+
+
+
 
 
     # This is temporary, for design purposes:
     return render_template('course.html', courseId=courseId, courseName=name, courseDesc=description, 
-            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'])
+            courseModules=modules, courseAssignments=assignments)
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])

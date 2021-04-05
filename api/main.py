@@ -517,8 +517,8 @@ class Module(db.Model):
     name = db.Column(db.String(50))
     description = db.Column(db.String(50))
     courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
-    documents = db.relationship("Document")
-    assignments = db.relationship("CourseAssignment")
+    # documents = db.relationship("Document")
+    # assignments = db.relationship("CourseAssignment")
 
     def __repr__(self):
         return "<Module Id: {}, Name: {}, Description: {}, CourseId: {}, docuemnts: {}, assignments: {}>".format(self.moduleId, self.name, self.description, self.courseId, self.documents, self.assignments)
@@ -586,8 +586,8 @@ class ModuleResource(Resource):
 
 
 # Register the Endpoints
-api.add_resource(ModuleListResource, '/module')
-api.add_resource(ModuleResource, '/module/<int:moduleId>')
+api.add_resource(ModuleListResource, '/modules')
+api.add_resource(ModuleResource, '/modules/<int:moduleId>')
 
 
 # MODULE DOCUMENTS  
@@ -598,7 +598,7 @@ class ModuleDocuments(db.Model):
     moduleId = db.Column(db.Integer, primary_key = 50)
     name = db.Column(db.String(50))
     description = db.Column(db.String(50))
-    documents = db.relationship("Document")
+    # documents = db.relationship("Document")
 
 
     def __repr__(self):
@@ -681,10 +681,10 @@ class ModuleAssignment(db.Model):
     name = db.Column(db.String(50))
     description = db.Column(db.String(50))
     courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
-    assignments = db.relationship("CourseAssignment")
+    # assignments = db.relationship("CourseAssignment")
 
     def __repr__(self):
-        return "<Module Id: {}, Name: {}, Description: {}, CourseId: {}, assignments: {}>".format(self.moduleId, self.name, self.description, self.courseId, self.documents, self.assignments)
+        return "<Module Id: {}, Name: {}, Description: {}, CourseId: {}, assignments: {}>".format(self.moduleId, self.name, self.description, self.courseId, self.assignments)
 
 
 # Marshmallow Schema
@@ -774,18 +774,16 @@ class Document(db.Model):
 
     documentId = db.Column(db.Integer, primary_key = True)
     moduleId = db.Column(db.Integer, db.ForeignKey('module.moduleId'))
-    studentAssignmentId = db.Column(db.Integer, db.ForeignKey('studentAssignment.assignmentId'))
-
-    # Enum Type --> Not Sure How to Proceed on this Yet
+    entry = db.Column(db.String(50))
 
 
     def __repr__(self):
-        return "Document Id: {}".format(self.documentId)
+        return "Document Id: {}, moduleId: {}, entry: {}".format(self.documentId, self.moduleId, self.entry)
 
 # Marshmallow Schema
 class DocumentSchema(ma.Schema):
     class Meta:
-        fields = ("documentId", "document")
+        fields = ("documentId", "moduleId", "entry")
 
 # Schema for Multiple Documents
 documents_schema = DocumentSchema(many = True)
@@ -804,7 +802,7 @@ class DocumentListResource(Resource):
     def post(self):
         newDocument = Document(
             moduleId = request.json['moduleId'],
-            studentAssignmentId = request.json['studentAssignmentId'],
+            entry = request.json['entry'],
         )
 
         db.session.add(newDocument)
@@ -831,16 +829,23 @@ class DocumentResource(Resource):
         return document_schema.dump(document)
 
 
-    def delete(self, documentId):
-        document = Document.query.get_or_404(documentId)
+    def delete(self, document_id):
+        document = Document.query.get_or_404(document_id)
         db.session.delete(document)
         db.session.commit()
         return '', 204
+
+class DocumentsByModule(Resource):
+    def get(self, module_id):
+        document = Document.query.filter_by(moduleId=module_id).all()
+        return documents_schema.dump(document)
+
 
 
 # Register the Endpoints
 api.add_resource(DocumentListResource, '/documents')
 api.add_resource(DocumentResource, '/documents/<int:documentId>')
+api.add_resource(DocumentsByModule, '/documentsbymodule/<int:module_id>')
 
 
 # CHAT
@@ -1131,18 +1136,17 @@ api.add_resource(AnnouncementResource, '/announcements/<int:announcementId>')
 
 # Course Assignment
 class CourseAssignment(db.Model):
-    __tablename__ = 'courseAssignment'
+    __tablename__ = 'courseassignment'
     
     courseAssignmentId = db.Column(db.Integer, primary_key = True)
     courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
-    moduleId = db.Column(db.Integer, db.ForeignKey('module.moduleId'))
     name = db.Column(db.String(50))
     description = db.Column(db.String(200))
     dueDate = db.Column(db.Integer)
 
     def __repr__(self):
 
-        return "<courseAssignmentId: {}, courseId: {}, moduleId: {},  Name: {}, Description: {}, dueDate: {}>".format(self.courseAssignmentId, self.courseId, self.moduleId, self.name, self.description, self.dueDate)
+        return "<courseAssignmentId: {}, courseId: {},  Name: {}, Description: {}, dueDate: {}>".format(self.courseAssignmentId, self.courseId, self.name, self.description, self.dueDate)
 
 # Marshmallow Schema
 class CourseAssignmentSchema(ma.Schema):
@@ -1160,7 +1164,7 @@ class CourseAssignmentsListResource(Resource):
 
     def get(self):
         posts = CourseAssignment.query.all()
-        return course_Assignment_Schema.dump(posts)
+        return courseAssignmentsSchema.dump(posts)
 
 
     def post(self):
@@ -1183,7 +1187,7 @@ class CourseAssignmentResource(Resource):
 
 
     def patch(self, courseId):
-        courseAssignment = CourseAssignment.get_or_404(courseId)
+        courseAssignment = CourseAssignment.query.get_or_404(courseId).first()
 
         if 'courseId' in request.json['courseId']:
             courseAssignment.courseId = request.json['courseId']
@@ -1199,9 +1203,15 @@ class CourseAssignmentResource(Resource):
         db.session.commit()
         return course_Assignment_Schema.dump(courseAssignment)
 
+class CourseAssignmentByCourse(Resource):
+    def get(self, course_id):
+        assignments = CourseAssignment.query.filter_by(courseId=course_id).all()
+        return courseAssignmentsSchema.dump(assignments)
+
 # Register Endpoints
-api.add_resource(CourseAssignmentsListResource, '/courseAssignments')
-api.add_resource(CourseAssignmentResource, '/courseAssignments/<int:courseId>')
+api.add_resource(CourseAssignmentsListResource, '/courseassignments')
+api.add_resource(CourseAssignmentResource, '/courseassignments/<int:courseId>')
+api.add_resource(CourseAssignmentByCourse, '/assignmentsbycourse/<int:course_id>')
     
 
 
@@ -1506,6 +1516,158 @@ curl http://localhost:5000/logins \
     -d '{"email":"deanallen@gmail.com", "password":"passTest.98", "userId": "999"}'
 '''
 
+# Course Module
+class CourseModule(db.Model):
+    __tablename__ = 'courseModule'
+    
+    courseModuleId = db.Column(db.Integer, primary_key = True)
+    courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
+    moduleId = db.Column(db.Integer, db.ForeignKey('module.moduleId'))
+
+    def __repr__(self):
+
+        return "<courseModuleId: {}, courseId: {},  moduleId: {}".format(self.courseModuleId, self.courseId, self.moduleId)
+
+# Marshmallow Schema
+class CourseModuleSchema(ma.Schema):
+    class Meta:
+        fields = ("courseModuleId", "courseId", "moduleId")
+
+# Schema for Multiple Course Assignments
+course_modules_schema = CourseModuleSchema(many = True)
+
+# Schema for Single Course Assignment
+course_module_schema = CourseModuleSchema()
+
+# Endpoint for a List of Course Assignments
+class CourseModulesResource(Resource):
+
+    def get(self):
+        modules = CourseModule.query.all()
+        return course_modules_schema.dump(modules)
+
+
+    def post(self):
+        module = CourseModule(
+            courseId = request.json['courseId'],
+            moduleId = request.json['moduleId'],
+        )
+        db.session.add(module)
+        db.session.commit()
+        return course_Assignment_Schema.dump(module)
+
+
+# Endpoint for a Single Course Assignment
+class ModulesByCourse(Resource):
+    def get(self, course_id):
+        course_module = CourseModule.query.filter_by(courseId = course_id).all()
+        return course_modules_schema.dump(course_module)
+
+# Register Endpoints
+api.add_resource(CourseModulesResource, '/coursemodules')
+api.add_resource(ModulesByCourse, '/coursemodules/<int:course_id>')
+
+# Module Document
+class ModuleDocument(db.Model):
+    __tablename__ = 'moduledocument'
+    
+    moduleDocumentId = db.Column(db.Integer, primary_key = True)
+    moduleId = db.Column(db.Integer, db.ForeignKey('module.moduleId'))
+    documentId = db.Column(db.Integer, db.ForeignKey('document.documentId'))
+
+    def __repr__(self):
+
+        return "<moduleDocumentId: {}, documentId: {},  moduleId: {}".format(self.moduleDocumentId, self.documentId, self.moduleId)
+
+# Marshmallow Schema
+class ModuleDocumentSchema(ma.Schema):
+    class Meta:
+        fields = ("moduleDocumentId", "moduleId", "documentId")
+
+# Schema for Multiple Course Assignments
+module_docs_schema = ModuleDocumentSchema(many = True)
+
+# Schema for Single Course Assignment
+module_doc_schema = ModuleDocumentSchema()
+
+# Endpoint for a List of Course Assignments
+class ModuleDocumentsResource(Resource):
+
+    def get(self):
+        moduledocs = ModuleDocument.query.all()
+        return module_docs_schema.dump(moduledocs)
+
+
+    def post(self):
+        module = ModuleDocument(
+            moduleId = request.json['moduleId'],
+            documentId = request.json['documentId'],
+        )
+        db.session.add(module)
+        db.session.commit()
+        return module_doc_schema.dump(module)
+
+
+# Endpoint for a Single Course Assignment
+class DocsByModules(Resource):
+    def get(self, module_id):
+        module_doc = ModuleDocument.query.filter_by(moduleId = module_id).all()
+        return course_modules_schema.dump(module_doc)
+
+# Register Endpoints
+api.add_resource(ModuleDocumentsResource, '/moduledocuments')
+api.add_resource(DocsByModules, '/moduledocuments/<int:module_id>')
+
+# Module Document
+class AssignmentDocument(db.Model):
+    __tablename__ = 'assignmentdocument'
+    
+    assignmentDocumentId = db.Column(db.Integer, primary_key = True)
+    assignmentId = db.Column(db.Integer, db.ForeignKey('courseassignment.courseAssignmentId'))
+    documentId = db.Column(db.Integer, db.ForeignKey('document.documentId'))
+
+    def __repr__(self):
+
+        return "<moduleDocumentId: {}, documentId: {},  assignmentId: {}".format(self.moduleDocumentId, self.documentId, self.assignmentId)
+
+# Marshmallow Schema
+class AssignmentDocumentSchema(ma.Schema):
+    class Meta:
+        fields = ("moduleDocumentId", "assignmentId", "documentId")
+
+# Schema for Multiple Course Assignments
+assignment_docs_schema = AssignmentDocumentSchema(many = True)
+
+# Schema for Single Course Assignment
+assignment_doc_schema = AssignmentDocumentSchema()
+
+# Endpoint for a List of Course Assignments
+class AssignmentDocumentsResource(Resource):
+
+    def get(self):
+        moduledocs = AssignmentDocument.query.all()
+        return assignment_docs_schema.dump(moduledocs)
+
+
+    def post(self):
+        module = AssignmentDocument(
+            assignmentId = request.json['assignmentId'],
+            documentId = request.json['documentId'],
+        )
+        db.session.add(module)
+        db.session.commit()
+        return assignment_doc_schema.dump(module)
+
+
+# Endpoint for a Single Course Assignment
+class DocsByAssignment(Resource):
+    def get(self, course_assignment_id):
+        module_doc = AssignmentDocument.query.filter_by(assignmentId = course_assignment_id).all()
+        return course_modules_schema.dump(module_doc)
+
+# Register Endpoints
+api.add_resource(AssignmentDocumentsResource, '/assignmentdocuments')
+api.add_resource(DocsByAssignment, '/assignmentdocuments/<int:course_assignment_id>')
 
 
 # main function that gets flask runnning
