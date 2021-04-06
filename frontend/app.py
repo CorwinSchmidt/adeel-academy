@@ -30,10 +30,15 @@ class LogIn(Form):
 
 @app.route('/')
 def index():
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
+
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
 
     # init form
     form = SignUp(request.form)
@@ -98,6 +103,9 @@ def sign_up():
 @app.route('/log-in', methods=['GET', 'POST'])
 def log_in():
 
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
+
     # when post from signup, set userId and role for user
     form = LogIn(request.form)
     if request.method == 'POST' and form.validate():
@@ -129,6 +137,7 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    
 
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
