@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
 from requests.api import get
+from requests.models import RequestHooksMixin
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -192,7 +193,13 @@ def inbox():
 # Displays all courses, along with a search bar + allows teachers to create a course
 @app.route('/all-courses', methods=['GET', 'POST'])
 def courses():
-    return render_template('all-courses.html')
+    courses = []
+    requests = req("get", "courses")
+    print("asdffdsa", request)
+    for i in requests:
+        courses.append([i["name"], i["description"]])
+
+    return render_template('all-courses.html', courses=courses)
 
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])
