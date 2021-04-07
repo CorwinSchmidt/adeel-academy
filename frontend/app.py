@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
 from requests.api import get
+from requests.models import RequestHooksMixin
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -30,10 +31,15 @@ class LogIn(Form):
 
 @app.route('/')
 def index():
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
+
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
 
     # init form
     form = SignUp(request.form)
@@ -98,6 +104,9 @@ def sign_up():
 @app.route('/log-in', methods=['GET', 'POST'])
 def log_in():
 
+    if session.get("loginId") is not None:
+        return redirect(url_for('dashboard'))
+
     # when post from signup, set userId and role for user
     form = LogIn(request.form)
     if request.method == 'POST' and form.validate():
@@ -129,6 +138,7 @@ def log_in():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    
 
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
@@ -183,7 +193,13 @@ def inbox():
 # Displays all courses, along with a search bar + allows teachers to create a course
 @app.route('/all-courses', methods=['GET', 'POST'])
 def courses():
-    return render_template('all-courses.html')
+    courses = []
+    requests = req("get", "courses")
+    print("asdffdsa", request)
+    for i in requests:
+        courses.append([i["name"], i["description"]])
+
+    return render_template('all-courses.html', courses=courses)
 
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])
@@ -198,31 +214,39 @@ def course(courseId):
     name = ""
     description=""
 
-    print(session["role"])
-    # get courses based on role
-    if session["role"] == "student":
-        print("fdsa")
-        # get studentId by login and set session
-        # request = req("get", "course", id=courseId)
+    # get course information
+    request = req("get", "courses", id=courseId)
+    name = request["name"]
+    description = request["description"]
 
-        # get courses
-    else:
-        print("fdsa")
-        # get studentId by login and set session
-        print(courseId)
-        request = req("get", "courses", id=courseId)
-        name = request["name"]
-        description = request["description"]
-        print("lok", description)
-        modules = request["modules"]
-        # assignments = request["assignments"] # not added yet
+    # get modules
+    request = req("get", "coursemodules", id=courseId)
 
-        print(request)
-        # get courses
+    for i in request:
+        module = req("get", "modules", id=i["moduleId"])
+        modules.append([module["moduleId"], module["name"]])
 
+
+    # get modules
+    request = req("get", "assignmentsbycourse", id=courseId)
+
+    for i in request:
+        print(module)
+        assignments.append([i["courseAssignmentId"], i["name"]])
+
+    print("assignments", assignments)
+
+
+
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> master
     # This is temporary, for design purposes:
-    return render_template('course.html', courseId=courseId, courseName= name, courseDesc=description, 
-            courseModules=["module1", "module2", "module3"], courseAssignments=['assignment1','assignment2','assignment3'])
+    return render_template('course.html', courseId=courseId, courseName=name, courseDesc=description, 
+            courseModules=modules, courseAssignments=assignments)
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])
@@ -247,6 +271,45 @@ def assignment(assignmentId):
 def results():
     # need to get users and courses that match input in search bar
     return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
+
+
+# Displays the Module Documents of a Given Course  
+@app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
+def moduleDocuments(courseId, moduleId):
+    
+    modules = []
+
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+        
+    request = req('GET', "courses", id = courseId)
+
+    for r in request:
+
+        request_docs = req("GET", "moduleDocuments", id = moduleId)   
+        modules.append(request_docs)
+
+
+    return render_template('course.html', modules = modules)
+
+# Displays the Module Assignments of a Given Course  
+@app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
+def moduleAssignments(courseId, moduleId):
+    
+    modules = []
+
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+        
+    request = req('GET', "courses", id = courseId)
+
+    for r in request:
+
+        request_docs = req("GET", "moduleAssignments", id = moduleId)   
+        modules.append(request_docs)
+
+
+    return render_template('course.html', modules = modules)
 
 # Logs the user out
 @app.route('/log-out', methods=['GET', 'POST'])

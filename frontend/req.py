@@ -24,10 +24,14 @@ def req(type, endpoint, data="", id=""):
             print("error:", resp.status_code, resp.reason)
             return False
     else:
-        url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
-        print(url)
-        resp = requests.get(url)
-
+        if id != "":
+            url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
+            print(url)
+            resp = requests.get(url)
+        else:
+            url = "http://127.0.0.1:5000/" + endpoint
+            print(url)
+            resp = requests.get(url)
         print(resp.status_code, resp.reason, resp.json )
 
         if resp.status_code == 200:
