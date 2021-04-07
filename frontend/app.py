@@ -188,6 +188,23 @@ def contact():
 # Displays a user's chats and the messages therein
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
+    if request.method == 'POST':
+        if request.get_json()["type"] == 'new-chat':
+            print("email", request.get_json()["email"])
+            logins = req("get", "logins")
+            print(logins)
+
+            loginId = 0
+            for i in logins:
+                if i['email'] == request.get_json()["email"]:
+                    loginId = i['loginId']
+
+            if loginId != 0:
+                print("Found!:", loginId)
+                
+
+
+
     return render_template('inbox.html', chats = ["Maria", "Joe", "Frank"])
 
 # Displays all courses, along with a search bar + allows teachers to create a course
@@ -238,12 +255,6 @@ def course(courseId):
 
 
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> master
     # This is temporary, for design purposes:
     return render_template('course.html', courseId=courseId, courseName=name, courseDesc=description, 
             courseModules=modules, courseAssignments=assignments)

@@ -175,3 +175,7 @@ input:valid {
   padding-bottom: 10vh;
 }
 /*# sourceMappingURL=style.css.map */
+
+.chat-search {
+  display: none;
+}

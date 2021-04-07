@@ -2,10 +2,15 @@
 
 {% block header %}
 <title>Inbox</title>
+
 {% endblock %}
 
 {% block body %}
+
     <div class="container" style="padding-top: 1rem; margin-left: 5%; margin-right: 5%; height: 100%;">
+        <button onclick="newChatSearch()" type="button" id="new-chat" class="btn btn-secondary">+ New Chat</button>
+        <input class="form-control chat-search" id ="search-bar"type="text" placeholder="Enter someone's email..." style="width: 20vw">
+
         <div class="row">
             <!-- Chat Selection -->
             <div class="col-4" style="height: 100%;">
@@ -26,5 +31,7 @@
         </div>
     </div>
 
+
+    <script src="{{url_for('static', filename='js/chat.js')}}"></script>
 
 {% endblock %}
