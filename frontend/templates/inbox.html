@@ -6,27 +6,42 @@
 {% endblock %}
 
 {% block body %}
-
-    <div class="container" style="padding-top: 1rem; margin-left: 5%; margin-right: 5%; height: 100%;">
-        <button onclick="newChatSearch()" type="button" id="new-chat" class="btn btn-secondary">+ New Chat</button>
+    <div class="container" style="padding-top: 1rem;">
+        <button onclick="newChatSearch()" type="button" id="new-chat" class="btn btn-secondary" style="margin-bottom: 1rem;">+ New Chat</button>
         <input class="form-control chat-search" id ="search-bar"type="text" placeholder="Enter someone's email..." style="width: 20vw">
 
         <div class="row">
             <!-- Chat Selection -->
-            <div class="col-4" style="height: 100%;">
+            <div class="col-4">
                 <div class="card" style="color: black;">
                     <ul class="list-group list-group-flush">
+                        <!-- Display Chats -->
                         {% for chat in chats %}
-                            <li class="list-group-item">{{chat}}</li>
+                            <li class="list-group-item">
+                                <a href="/chat/{{ chat }}" style="color: black;">{{ chat }}</a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
             <!-- Chat Window -->
-            <div class="col-8" style="height: 20rem; background-color: cadetblue;">
-                <!-- Get chat contents -->
+            <div class="col-6">
                 <!-- Display chat messages as cards -->
-                <!-- See _chat.scss for formatting -->
+                {% for i in range(len) %}
+                    {% if senders[i] == "user" %}
+                        <div class="d-flex flex-row-reverse chat-from-me">
+                            <div class="p-11" style="margin-top: 0.1rem; padding: 0.25rem 0.5rem; border: 1px solid black; background-color: cadetblue; word-wrap: break-word;">
+                                {{ messages[i] }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex flex-row chat">
+                            <div class="p-11" style="margin-top: 0.1rem; padding: 0.25rem 0.5rem; border: 1px solid black; background-color: lightgray; word-wrap: break-word;">
+                                {{ messages[i] }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

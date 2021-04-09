@@ -7,11 +7,9 @@ import requests
 import json
 from req import req
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '23r23423988a8f8fsw12'
 CORS(app=app)
-
 
 # forms
 class SignUp(Form):
@@ -25,9 +23,6 @@ class LogIn(Form):
     email = StringField('Email Address', validators=[validators.DataRequired()])
     password = PasswordField('Password', validators=[validators.DataRequired()])
     submit = SubmitField('Log In')
-
-# request template
-
 
 @app.route('/')
 def index():
@@ -99,8 +94,6 @@ def sign_up():
         # return redirect(url_for('log-in'))
     return render_template('sign-up.html', form=form)
 
-
-
 @app.route('/log-in', methods=['GET', 'POST'])
 def log_in():
 
@@ -139,7 +132,6 @@ def log_in():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     
-
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
@@ -185,9 +177,28 @@ def dashboard():
 def contact():
     return render_template('contact.html')
 
-# Displays a user's chats and the messages therein
+# Displays a user's chats
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
+    
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
+    # TODO: Get user's chats, set as 'chats' variable
+    #temp:
+    chats = ["Maria", "Joe", "Frank"]
+
+    return render_template('inbox.html', chats = chats, messages = [], senders = [], len = 0)
+
+# Displays a user's chats and the messages in the selected chat
+@app.route('/chat/<chatName>', methods=['GET', 'POST'])
+def chat(chatName):
+    
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
     if request.method == 'POST':
         if request.get_json()["type"] == 'new-chat':
             print("email", request.get_json()["email"])
@@ -201,22 +212,43 @@ def inbox():
 
             if loginId != 0:
                 print("Found!:", loginId)
-                
 
+    # TODO: Get user's chats, set as 'chats' variable
+    #temp:
+    chats = ["Maria", "Joe", "Frank"]
 
+    # TODO: Get messages corresponding to chatName, set as 'messages' variable
+    #temp:
+    if chatName == "Maria":
+        messages = ["message 1", "message 2"]
+        senders = ["user", "Maria"]
+    elif chatName == "Joe":
+        messages = ["message 1", "message 2", "message 3"]
+        senders = ["Joe", "Joe", "user"]
+    elif chatName == "Frank":
+        messages = ["message 1", "message 2", "message 3",  
+            "This is a really long message. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWORDBREAKISN'TWORKINGTHEWORDWON'TBREAKITJUSTGOESOFFTHESCREEN"]
+        senders = ["Frank", "user", "user", "Frank"]
 
-    return render_template('inbox.html', chats = ["Maria", "Joe", "Frank"])
+    return render_template('inbox.html', chats = chats, messages = messages, senders = senders, len = len(messages))
 
 # Displays all courses, along with a search bar + allows teachers to create a course
 @app.route('/all-courses', methods=['GET', 'POST'])
 def courses():
-    courses = []
-    requests = req("get", "courses")
-    print("asdffdsa", request)
-    for i in requests:
-        courses.append([i["name"], i["description"]])
 
-    return render_template('all-courses.html', courses=courses)
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+    
+    courses = []
+    request = req("get", "courses")
+    for i in request:
+        courses.append([i["name"], i["description"], i["courseId"]])
+
+    if session["role"] == "teacher":
+        isTeacher = True
+
+    return render_template('all-courses.html', courses=courses, isTeacher = isTeacher)
 
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])
@@ -269,12 +301,19 @@ def studentAssignments():
     return render_template('student-assignments.html')
 
 # Displays an assignment
-@app.route('/assignment/<assignmentId>')
+@app.route('/assignments/<assignmentId>')
 def assignment(assignmentId):
-    request = req("get", "courses", id=courseId)
-    request.name = 'Example Assignment Name'
-    request.description = 'Example assignment description. Blah blah blah blah blah'
-    request.dueTime = 1
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
+    request = req("get", "moduleAssignments", id=assignmentId)
+    # courses.append([i["name"], i["description"], i["courseId"]])
+
+    if session["role"] == "teacher":
+        isTeacher = True
+    
     return render_template('assignment.html', assignment = request)
 
 # Displays the results of a search conducted from the 
@@ -282,7 +321,6 @@ def assignment(assignmentId):
 def results():
     # need to get users and courses that match input in search bar
     return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
-
 
 # Displays the Module Documents of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])

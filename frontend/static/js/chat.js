@@ -29,7 +29,7 @@ function sendToBackend(email) {
                 // show error for creation
                 console.log(response.status);
                 document.getElementById("error").style.display = 'block';
-                document.getElementById("error").innerHTML ="<p>Error loggin into your account, please try again.</p>";
+                document.getElementById("error").innerHTML ="<p>Error logging in to your account, please try again.</p>";
             } else {
                 console.log("valid email");
             }

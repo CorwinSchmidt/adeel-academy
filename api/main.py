@@ -689,8 +689,6 @@ class ModuleAssignment(db.Model):
 
 # Marshmallow Schema
 class ModuleAssignmentSchema(ma.Schema):
-
-
     class Meta:
         fields = ("moduleId","name", "description", "courseId", "courseAssignments")
 
