@@ -9,6 +9,10 @@ html {
           box-sizing: inherit;
 }
 
+div {
+  word-wrap: break-word;
+}
+
 body {
   margin: 0;
   padding: 0;

@@ -5,12 +5,34 @@
 {% endblock %}
 
 {% block body %}
-<ul class="list-group" style="padding-left: 20vw; padding-right: 20vw; padding-top: 10vh;">
-    {% for course in courses %}
-    <li class="list-group-item">
-        <h3>{{ course[0] }} </h3>
-        <p>{{ course[1] }} </p>
-    </li>
-    {% endfor %}
-</ul>
+    <div class="container" style="padding-top: 1rem;">
+
+        {% if isTeacher %}
+            <button onclick="newCourse()" type="button" id="new-course" class="btn btn-secondary" style="margin-bottom: 1rem;">Create Course</button>
+        {% endif %}
+
+        <div class="card" style="width: 100%;">
+            <ul class="list-group list-group-flush">
+                {% for course in courses %}
+                <a href="/course/{{ course[2] }}">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-11">
+                                <h3>{{ course[0][:40] }} </h3>
+                                <p>{{ course[1][:50] }} </p>
+                            </div>
+                            {% if not isTeacher %}
+                                <div class="col-1">
+                                    <button type="button" id="register-to-{{ course[2] }}" class="btn btn-secondary">Register</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='js/courses.js')}}"></script>
 {% endblock %}
