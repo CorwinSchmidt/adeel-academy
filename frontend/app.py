@@ -181,7 +181,7 @@ def contact():
 # Displays a user's chats
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
-
+    print("loginId", session['loginId'])
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
@@ -234,10 +234,6 @@ def inbox():
                 
 
 
-    
-
-    # TODO: Get user's chats, set as 'chats' variable
-    #temp:
     chats = []
     chats_reqs = req('get', 'haschats')
     for i in chats_reqs:
