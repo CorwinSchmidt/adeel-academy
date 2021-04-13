@@ -1,0 +1,41 @@
+{% extends "base-logged-in.html" %}
+
+{% block header %}
+<title>Chat</title>
+
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="padding-top: 1rem;">
+        <h1>{{ other }}</h1>
+        <!-- Chat Selection -->
+        <div class="row">
+            <!-- Chat Window -->
+            <div class="col-6">
+                <!-- Display chat messages as cards -->
+                {% for i in messages %}
+                    {% if i[1] == "user" %}
+                        <div class="d-flex flex-row-reverse chat-from-me">
+                            <div class="p-11" style="margin-top: 0.1rem; padding: 0.25rem 0.5rem; border: 1px solid black; background-color: cadetblue; word-wrap: break-word;">
+                                {{ i[0] }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex flex-row chat">
+                            <div class="p-11" style="margin-top: 0.1rem; padding: 0.25rem 0.5rem; border: 1px solid black; background-color: lightgray; word-wrap: break-word;">
+                                {{ i[0] }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row" style='position: fixed; bottom: 10vh;'>
+            <input class="form-control" id ="chat-bar"type="text" placeholder="Message to {{ other }}" style="width: 50vw">
+        </div>
+    </div>
+
+
+    <script src="{{url_for('static', filename='js/chat-page.js')}}"></script>
+
+{% endblock %}

@@ -7,18 +7,25 @@
 
 {% block body %}
     <div class="container" style="padding-top: 1rem;">
+
+        <!-- displays chat search -->
         <button onclick="newChatSearch()" type="button" id="new-chat" class="btn btn-secondary" style="margin-bottom: 1rem;">+ New Chat</button>
         <input class="form-control chat-search" id ="search-bar"type="text" placeholder="Enter someone's email..." style="width: 20vw">
 
+        <!-- display chat search errors -->
+        <div id="err">
+
+        </div>
+        
+        <!-- Chat Selection -->
         <div class="row">
-            <!-- Chat Selection -->
             <div class="col-4">
                 <div class="card" style="color: black;">
                     <ul class="list-group list-group-flush">
                         <!-- Display Chats -->
                         {% for chat in chats %}
                             <li class="list-group-item">
-                                <a href="/chat/{{ chat }}" style="color: black;">{{ chat }}</a>
+                                <a href="/chat/{{ chat[1] }}" style="color: black;">{{ chat[0] }}</a>
                             </li>
                         {% endfor %}
                     </ul>

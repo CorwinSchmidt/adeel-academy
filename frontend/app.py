@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
+from typing import NoReturn
+from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
 from requests.api import get
 from requests.models import RequestHooksMixin
 from flask_cors import CORS
@@ -180,57 +181,120 @@ def contact():
 # Displays a user's chats
 @app.route('/inbox', methods=['GET', 'POST'])
 def inbox():
-    
+
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
 
-    # TODO: Get user's chats, set as 'chats' variable
-    #temp:
+
     chats = ["Maria", "Joe", "Frank"]
 
-    return render_template('inbox.html', chats = chats, messages = [], senders = [], len = 0)
-
-# Displays a user's chats and the messages in the selected chat
-@app.route('/chat/<chatName>', methods=['GET', 'POST'])
-def chat(chatName):
-    
-    #  when not logged in, redirect to login page
-    if session.get("loginId") is None:
-        return redirect(url_for('log_in'))
+    search_error=None
 
     if request.method == 'POST':
-        if request.get_json()["type"] == 'new-chat':
-            print("email", request.get_json()["email"])
-            logins = req("get", "logins")
-            print(logins)
 
+        # creating new chat
+        if request.get_json()["type"] == 'new-chat':
+            logins = req("get", "logins")
             loginId = 0
             for i in logins:
                 if i['email'] == request.get_json()["email"]:
                     loginId = i['loginId']
-
             if loginId != 0:
                 print("Found!:", loginId)
 
+                data = {
+                    'userId1' : session['loginId'],
+                    'userId2' : loginId,
+                }
+
+                # check old chat to see if it exists
+                old_chats = req('get', 'haschats')
+                chat_found = False
+                for chat in old_chats:
+                    if (chat['userId1'] == data['userId1'] and chat['userId2'] == data['userId2']) or (chat['userId1'] == data['userId2'] and chat['userId2'] == data['userId1']):
+                        chat_found = True
+
+                # when old chat exists 
+                if chat_found:
+                    res = jsonify({"error": "already created"})
+                    res.status_code = 304
+                    print("chat already created")
+                    return res
+                else:
+                    print("created")
+                    created_chat = req('post', 'haschats', data=data)
+                    res = jsonify({"error": "no error"})
+                    res.status_code = 200
+                    return res 
+            else:
+                res = jsonify({"error": 'email does not exist'})
+                res.status_code = 500
+                return res
+                
+
+
+    
+
     # TODO: Get user's chats, set as 'chats' variable
     #temp:
-    chats = ["Maria", "Joe", "Frank"]
+    chats = []
+    chats_reqs = req('get', 'haschats')
+    for i in chats_reqs:
+        if i['userId1'] == session['loginId']:
+            other_user = req('get', 'logins', id=i['userId2'])
+            chats.append([other_user['email'], i['hasChatId']])
+        elif i['userId2'] == session['loginId']:
+            other_user = req('get', 'logins', id=i['userId1'])
+            chats.append([other_user['email'], i['hasChatId']])
 
-    # TODO: Get messages corresponding to chatName, set as 'messages' variable
-    #temp:
-    if chatName == "Maria":
-        messages = ["message 1", "message 2"]
-        senders = ["user", "Maria"]
-    elif chatName == "Joe":
-        messages = ["message 1", "message 2", "message 3"]
-        senders = ["Joe", "Joe", "user"]
-    elif chatName == "Frank":
-        messages = ["message 1", "message 2", "message 3",  
-            "This is a really long message. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWORDBREAKISN'TWORKINGTHEWORDWON'TBREAKITJUSTGOESOFFTHESCREEN"]
-        senders = ["Frank", "user", "user", "Frank"]
 
-    return render_template('inbox.html', chats = chats, messages = messages, senders = senders, len = len(messages))
+    return render_template('inbox.html', chats=chats, messages=[], senders=[], len=0, search_error=search_error)
+
+# Displays a user's chats and the messages in the selected chat
+@app.route('/chat/<chat_id>', methods=['GET', 'POST'])
+def chat(chat_id):
+    
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
+
+    # when message is sent from curent user
+    if request.method == 'POST':
+        print(request.get_json()["message"])
+
+        message_data = {
+            "chatId": chat_id,
+            "timeStamp": 000,
+            "userId": session['loginId'],
+            "message": request.get_json()["message"]
+        }
+
+        send_message = req('post', 'messages', data=message_data)
+
+        return redirect(url_for('chat', chat_id=chat_id))
+    
+
+    # get other persons email
+    curr_chat = req("get", "haschats", id=chat_id)
+    if curr_chat['userId1'] == session['loginId']:
+        other = req('get', 'logins', id=curr_chat['userId2'])['email']
+    elif curr_chat['userId2'] == session['loginId']:
+        other = req('get', 'logins', id=curr_chat['userId1'])['email']
+
+    # get messages
+    messages = []
+    message_reqs = req("get", "getmessagebychat", id=chat_id)
+    for message in message_reqs:
+        if message['userId'] == session['loginId']:
+            messages.append([message['message'], 'user'])
+        else:
+            messages.append([message['message'], 'other'])
+
+    # messages = [["message 1", "user"], ["message 2", "other"]]
+
+    return render_template('chat.html', messages=messages, other=other)
 
 # Displays all courses, along with a search bar + allows teachers to create a course
 @app.route('/all-courses', methods=['GET', 'POST'])

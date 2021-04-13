@@ -16,7 +16,6 @@ def req(type, endpoint, data="", id=""):
     if type == "post":
         resp = requests.post("http://127.0.0.1:5000/" + endpoint, json=data)
 
-        print(resp.status_code, resp.reason, resp.json )
 
         if resp.status_code == 200:
             return json.loads(resp.text)
@@ -26,13 +25,11 @@ def req(type, endpoint, data="", id=""):
     else:
         if id != "":
             url = "http://127.0.0.1:5000/" + endpoint + "/" + str(id)
-            print(url)
             resp = requests.get(url)
         else:
             url = "http://127.0.0.1:5000/" + endpoint
-            print(url)
             resp = requests.get(url)
-        print(resp.status_code, resp.reason, resp.json )
+
 
         if resp.status_code == 200:
             return json.loads(resp.text)

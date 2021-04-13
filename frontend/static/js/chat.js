@@ -14,7 +14,7 @@ function sendToBackend(email) {
     };
 
     console.log(data);
-
+    var found  = false;
     fetch("/inbox", {
         method: "POST", 
         body : JSON.stringify(data), 
@@ -24,27 +24,37 @@ function sendToBackend(email) {
     }).then(response => {
         response.json().then(json => {
             // code that can access both here
-            if (response.status >= 400){
+            if (response.status == 500){
                 console.log("trying to show error");
                 // show error for creation
-                console.log(response.status);
-                document.getElementById("error").style.display = 'block';
-                document.getElementById("error").innerHTML ="<p>Error logging in to your account, please try again.</p>";
+                // console.log(response.status);
+                document.getElementById('err').innerHTML  = "<p style='color:red'>Email does not exist</p>";
+            } else if (response.status == 304) {
+                console.log("chat already created")
+                document.getElementById('err').innerHTML  = "<p style='color:yellow'>Chat already created</p>";
             } else {
                 console.log("valid email");
+                document.getElementById('err').innerHTML  = "<p style='color:green'>Chat created!</p>";
             }
         })
     });
+
+
 }
 
+
+function displayError() {
+    document.getElementById('err').innerHTML  = "<p>Error</p>"
+}
 
 // get input from search and then reset input
 document.querySelector('#search-bar').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         var input = document.getElementById('search-bar').value;
-        document.getElementById("new-chat").style.display = 'block';
-        document.getElementById("search-bar").style.display = 'none';
+        document.getElementById("search-bar").value= '';
         sendToBackend(input)
     }
 });
+
+
 
