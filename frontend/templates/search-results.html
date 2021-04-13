@@ -7,7 +7,7 @@
 {% block body %}
     <div class="container">
         <!-- Display User Results -->
-        <p>
+        <!-- <p>
             <a class="btn btn-primary" data-bs-toggle="collapse" href="#usersCollapse" role="button" aria-expanded="false" aria-controls="usersCollapse" style="margin-top: 1rem; background-color: chocolate;">
                 User Results
             </a>
@@ -20,7 +20,7 @@
                 </li>
                 {% endfor %}
               </ul>
-        </div>
+        </div> -->
 
         <!-- Display Course Results -->
         <p>
@@ -32,8 +32,39 @@
             <ul class="list-group">
                 {% for course in courses %}
                 <li class="list-group-item">
-                    <!-- Get courseId somehow -->
-                    <a href="/course/{{ courseId }}/home" style="color: black;">{{ course }}</a>
+                    <a href="/course/{{ course.courseId }}/home" style="color: black;">{{ course.name }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+        </div>
+
+        <!-- Display Module Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#modulesCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                Module Results
+            </a>
+        </p>
+        <div class="collapse" id="modulesCollapse">
+            <ul class="list-group">
+                {% for module in modules %}
+                <li class="list-group-item">
+                    <a href="/module/{{ module.moduleId }}/home" style="color: black;">{{ module.name }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+        </div>
+
+        <!-- Display Assignment Results -->
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#assignmentsCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
+                Assignment Results
+            </a>
+        </p>
+        <div class="collapse" id="assignmentsCollapse">
+            <ul class="list-group">
+                {% for course in courses %}
+                <li class="list-group-item">
+                    <a href="/module/{{ assignment.assignmentId }}/home" style="color: black;">{{ assignment.name }}</a>
                 </li>
                 {% endfor %}
               </ul>

@@ -384,7 +384,12 @@ def assignment(assignmentId):
 @app.route('/results', methods=['GET', 'POST'])
 def results():
     # need to get users and courses that match input in search bar
-    return render_template('search-results.html', users=['user 1', 'user 2'], courses=['course 1', 'course 2'])
+    users = []
+    courses = []
+    modules = []
+    assignments = []
+
+    return render_template('search-results.html', users=users, courses=courses, modules=modules, assignments=assignments)
 
 # Displays the Module Documents of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
