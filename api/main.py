@@ -1010,7 +1010,7 @@ class MessagesListResource(Resource):
             chatId = request.json['chatId'],
             userId = request.json['userId'],
             message = request.json['message'],
-            timestamp = request.json['timeStamp'],
+            timeStamp = request.json['timeStamp'],
         )
         db.session.add(new_message)
         db.session.commit()
@@ -1045,10 +1045,15 @@ class MessageResource(Resource):
         db.session.delete(message)
         db.session.commit()
         return message_schema.dump(message)
+
+class MessagesByChatResource(Resource):
+    def get(self, chat_id):
+        messages = Message.query.filter_by(chatId=chat_id)
+        return messages_schema.dump(messages)
         
 # Register Endpoints
 api.add_resource(MessagesListResource, '/messages')
-api.add_resource(MessageResource, '/messages/<int:messageId>')
+api.add_resource(MessagesByChatResource, '/getmessagebychat/<int:chat_id>')
 
 
 # ANNOUNCEMENT
@@ -1666,6 +1671,57 @@ class DocsByAssignment(Resource):
 # Register Endpoints
 api.add_resource(AssignmentDocumentsResource, '/assignmentdocuments')
 api.add_resource(DocsByAssignment, '/assignmentdocuments/<int:course_assignment_id>')
+
+# Module Document
+class HasChat(db.Model):
+    __tablename__ = 'haschat'
+    
+    hasChatId = db.Column(db.Integer, primary_key = True)
+    userId1 = db.Column(db.Integer, db.ForeignKey('login.loginId'))
+    userId2 = db.Column(db.Integer, db.ForeignKey('login.loginId'))
+
+    def __repr__(self):
+
+        return "<hasChatId: {}, userId1: {},  userId1: {}".format(self.hasChatId, self.userId1, self.userId1)
+
+# Marshmallow Schema
+class HasChatSchema(ma.Schema):
+    class Meta:
+        fields = ("hasChatId", "userId1", "userId2")
+
+# Schema for Multiple Course Assignments
+has_chats_schema = HasChatSchema(many = True)
+
+# Schema for Single Course Assignment
+has_chat_schema = HasChatSchema()
+
+# Endpoint for a List of Course Assignments
+class HasChatsResource(Resource):
+
+    def get(self):
+        moduledocs = HasChat.query.all()
+        return has_chats_schema.dump(moduledocs)
+
+
+    def post(self):
+        module = HasChat(
+            userId1 = request.json['userId1'],
+            userId2 = request.json['userId2'],
+        )
+        db.session.add(module)
+        db.session.commit()
+        return has_chat_schema.dump(module)
+
+
+# Endpoint for a Single Course Assignment
+class ChatById(Resource):
+    def get(self, chat_id):
+        module_doc = HasChat.query.filter_by(hasChatId = chat_id).first()
+        return has_chat_schema.dump(module_doc)
+
+# Register Endpoints
+api.add_resource(HasChatsResource, '/haschats')
+api.add_resource(ChatById, '/haschats/<int:chat_id>')
 
 
 # main function that gets flask runnning
