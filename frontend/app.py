@@ -169,9 +169,9 @@ def dashboard():
             courses_req = req("get", "courses", id=i["courseId"])
             courses.append(courses_req)
     
-    print(courses)
+    numCourses = len(courses)
 
-    return render_template('dashboard.html', courses=courses)
+    return render_template('dashboard.html', courses=courses, numCourses=numCourses)
 
 # Displays a static contact page for support
 @app.route('/contact')

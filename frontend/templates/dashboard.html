@@ -6,23 +6,26 @@
 
 {% block body %}
 
-    <!-- Course List -->
+
     <div class="container">
       <div class="row">
-        {% for course in courses %}
-          <div class="card" style="width: 18rem; margin: 1rem;">
-            <a href="/course/courseId">
-              <img src="/static/images/logo.webp" class="card-img-top" style="margin-top: 1rem;">
-            </a>
-            <div class="card-body">
-              <h5 class="card-title">{{ course.name[:20] }}</h5>
-              <p class="card-text" style="height: 4rem;">{{ course.description[:30] }}</p>
-              <!-- Somehow need to get the correct course ID and get it to course() -->
-              <a href="/course/{{ course.courseId }}" class="btn btn-primary">View Course</a>
+        {% if numCourses == 0 %}
+          <!-- Empty course list message -->
+          <p style="text-align: center; margin: 2rem;">You aren't enrolled in any courses. Head to the Courses page to enroll.</p>
+        {% else %}
+          <!-- Course list -->
+          {% for course in courses %}
+            <div class="card" style="width: 18rem; margin: 1rem;">
+              <a href="/course/courseId">
+                <img src="/static/images/logo.webp" class="card-img-top" style="margin-top: 1rem;">
+              </a>
+              <div class="card-body">
+                <h5 class="card-title">{{ course.name[:20] }}</h5>
+                <p class="card-text" style="height: 4rem;">{{ course.description[:30] }}</p>
+                <a href="/course/{{ course.courseId }}" class="btn btn-primary">View Course</a>
+              </div>
             </div>
-          </div>
-        {% endfor %}
-
-
+          {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
