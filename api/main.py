@@ -1184,27 +1184,27 @@ class CourseAssignmentsListResource(Resource):
 
 # Endpoint for a Single Course Assignment
 class CourseAssignmentResource(Resource):
-    def get(self, courseId):
-        courseAssignment = CourseAssignment.get_or_404(courseId)
-        return course_Assignment_Schema.dump(courseAssignment)
+    def get(self, course_id):
+        course_assignment = CourseAssignment.query.filter_by(courseAssignmentId=course_id).first()
+        return course_Assignment_Schema.dump(course_assignment)
 
 
     def patch(self, courseId):
-        courseAssignment = CourseAssignment.query.get_or_404(courseId).first()
+        course_assignment = CourseAssignment.query.filter_by(courseAssignmentId=courseId).first()
 
         if 'courseId' in request.json['courseId']:
-            courseAssignment.courseId = request.json['courseId']
+            course_assignment.courseId = request.json['courseId']
 
         if 'name' in request.json['name']:
-            courseAssignment.name = request.json['name']
+            course_assignment.name = request.json['name']
         if 'description' in request.json['description']:
 
-            courseAssignment.description = request.json['description']
+            course_assignment.description = request.json['description']
         if 'dueDate' in request.json['dueDate']:
-            courseAssignment.dueDate = request.json['dueDate']
+            course_assignment.dueDate = request.json['dueDate']
 
         db.session.commit()
-        return course_Assignment_Schema.dump(courseAssignment)
+        return course_Assignment_Schema.dump(course_assignment)
 
 class CourseAssignmentByCourse(Resource):
     def get(self, course_id):
@@ -1213,7 +1213,7 @@ class CourseAssignmentByCourse(Resource):
 
 # Register Endpoints
 api.add_resource(CourseAssignmentsListResource, '/courseassignments')
-api.add_resource(CourseAssignmentResource, '/courseassignments/<int:courseId>')
+api.add_resource(CourseAssignmentResource, '/courseassignments/<int:course_id>')
 api.add_resource(CourseAssignmentByCourse, '/assignmentsbycourse/<int:course_id>')
     
 
@@ -1222,20 +1222,18 @@ api.add_resource(CourseAssignmentByCourse, '/assignmentsbycourse/<int:course_id>
 class StudentAssignment(db.Model):
     __tablename__ = 'studentAssignment'
 
-    assignmentId = db.Column(db.Integer, primary_key = 50)
-    name = db.Column(db.String(50))
-    description = db.Column(db.String(50))
-    dueDate = db.Column(db.Integer)
+    studentAssignmentId = db.Column(db.Integer, primary_key = 50)
+    courseAssignmentId = db.Column(db.Integer, db.ForeignKey('courseassignment.courseAssignmentId'))
+    text = db.Column(db.String(50000))
     grade = db.Column(db.Float)
-    turnedIn = db.Column(db.Boolean)
 
     def __repr__(self):
-        return "Assignment Id: {}, Name: {}, Description: {}, Due Date: {}, Grade: {}, Turned in: {}".format(self.assignmentId, self.name, self.description, self.dueDate, self.grade, self.turnedIn)
+        return "studentAssignmentId: {}, courseAssignmentId: {}, text: {}, grade: {}".format(self.studentAssignmentId, self.courseAssignmentId, self.text, self.grade,)
 
 # Marshmallow Schema
 class StudentAssignmentSchema(ma.Schema):
     class Meta:
-        fields = ("assignmentId", "name", "description", "dueDate", "grade", "turnedIn")
+        fields = ("studentAssignmentId", "courseAssignmentId", "text", "grade")
 
 # Schema for Multiple Student Assignments
 students_assignment_schema = StudentAssignmentSchema(many = True)
@@ -1534,7 +1532,7 @@ class CourseModule(db.Model):
 # Marshmallow Schema
 class CourseModuleSchema(ma.Schema):
     class Meta:
-        fields = ("courseModuleId", "courseId", "moduleId")
+        fields = ("courseModuleId", "courseId   ", "moduleId")
 
 # Schema for Multiple Course Assignments
 course_modules_schema = CourseModuleSchema(many = True)
