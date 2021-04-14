@@ -1,22 +1,36 @@
 {% extends "base-logged-in.html" %}
 
 {% block header %}
-    <title>Assignment: {{ assignment.name }}</title>
+    <title>{{ assignment.name }}</title>
 {% endblock %}
 
 {% block body %}
 <div class="container" >
     <div class="row" style="margin-top: 1rem; border-bottom: 2px solid black; text-align: center;">
-      <h6 style="font-size: 1.5rem;">{{ courseName }}</h6>
+      <h6 style="font-size: 1.5rem;">{{ course_title }}</h6>
     </div>
     <div class="row" style="margin-top: 1rem;">
       <div class="col-2">
         <!-- Sidebar -->
+        
       </div>
 
       <div class="col-10" style="border-left: 1px solid black;">
-          <p style="text-align: center;">{{ assignmentDesc }}</p>
+          <p style="text-align: center;">{{ assignment.name }}</p>
+          <p style="text-align: center;">{{ assignment.description }}</p>
+          <p style="text-align: center;">{{ assignment.dueDate }}</p>
+          {% if is_teacher == false %}
+            <button type="button" class="btn btn-success" id="assignment">Submit Assignment</button>
+            </br>
+            </br>
+            <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 50vw; display:none">
+          
+            <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
+          {% endif %}
       </div>
     </div>
   </div>
+
+  <script src="{{url_for('static', filename='js/assignment.js')}}"></script>
+
 {% endblock %}

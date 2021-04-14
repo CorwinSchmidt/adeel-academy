@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import NamedTuple, NoReturn
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
 from requests.api import get
 from requests.models import RequestHooksMixin
@@ -154,6 +154,7 @@ def dashboard():
         for i in request:
             courses_req = req("get", "courses", id=i["courseId"])
             courses.append(courses_req)
+        print(courses)
     else:
 
         # get teacherId by login and set session
@@ -313,10 +314,50 @@ def courses():
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])
 def course(courseId):
-
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
+
+    # when teacher set is_teacher to true in order to pass to template
+    is_teacher = False
+    if session.get("role") == 'teacher':
+        is_teacher = True
+
+    # when post from frontend
+    if request.method == 'POST':
+        if request.get_json()['type'] == 'create_module':
+            name = request.get_json()['name']
+            description = request.get_json()['description']
+            data={
+                'name': name, 
+                'description': description,
+                'courseId': courseId,
+            }
+            posted_module = req("post", "modules", data=data)
+            data = {
+                'moduleId' : posted_module['moduleId'],
+                'courseId' : courseId
+            }
+            posted_course_module = req("post", "coursemodules", data)
+            print("posted", posted_module)
+            return redirect('course', courseId)
+
+
+        if request.get_json()['type'] == 'create_assignment':
+            name = request.get_json()['name']
+            description = request.get_json()['description']
+            due_date = request.get_json()['dueDate'].replace("/","")
+            print(request.get_json())
+            data={
+                'name': name, 
+                'description': description,
+                'dueDate': due_date,
+                'courseId': courseId,
+            }
+            posted_assignment = req("post", "courseassignments", data=data)
+            print(posted_assignment)
+            return redirect(url_for('course', courseId=courseId))
+
 
     modules = []
     assignments = []
@@ -324,32 +365,35 @@ def course(courseId):
     description=""
 
     # get course information
-    request = req("get", "courses", id=courseId)
-    name = request["name"]
-    description = request["description"]
+    course = req("get", "courses", id=courseId)
+    name = course["name"]
+    description = course["description"]
 
     # get modules
-    request = req("get", "coursemodules", id=courseId)
+    req_modules = req("get", "coursemodules", id=courseId)
 
-    for i in request:
+    for i in req_modules:
         module = req("get", "modules", id=i["moduleId"])
         modules.append([module["moduleId"], module["name"]])
 
 
-    # get modules
-    request = req("get", "assignmentsbycourse", id=courseId)
-
-    for i in request:
-        print(module)
+    # get assignments
+    assignment_reqs = req("get", "assignmentsbycourse", id=courseId)
+    assignments = []
+    for i in assignment_reqs:
         assignments.append([i["courseAssignmentId"], i["name"]])
 
-    print("assignments", assignments)
 
 
 
     # This is temporary, for design purposes:
-    return render_template('course.html', courseId=courseId, courseName=name, courseDesc=description, 
-            courseModules=modules, courseAssignments=assignments)
+    return render_template(
+        'course.html', 
+        courseId=courseId, 
+        courseName=name, 
+        courseDesc=description, 
+        courseModules=modules, courseAssignments=assignments,
+        is_teacher = is_teacher)
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])
@@ -368,13 +412,22 @@ def assignment(assignmentId):
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
 
-    request = req("get", "moduleAssignments", id=assignmentId)
-    # courses.append([i["name"], i["description"], i["courseId"]])
+    assignment_req = req("get", "courseassignments", id=assignmentId)
+    date = str(assignment_req['dueDate'])
+    assignment_req['dueDate'] = date[:2] + '/' + date[2:4] + "/" + date[4:]
 
-    if session["role"] == "teacher":
-        isTeacher = True
+    print(assignment_req)
+
+    course_req = req("get", "courses", id=assignment_req['courseId'])
     
-    return render_template('assignment.html', assignment = request)
+    is_teacher = False
+    if session["role"] == "teacher":
+        is_teacher = True
+    
+    return render_template('assignment.html', 
+        assignment = assignment_req, 
+        course_title = course_req['name'],
+        is_teacher= is_teacher)
 
 # Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])

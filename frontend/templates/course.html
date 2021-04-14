@@ -14,6 +14,14 @@
 
           <!-- Modules -->
           <p style="text-align: center; font-size: 1rem;">Modules</p>
+          {% if is_teacher %}
+            <button type="button" class="btn btn-success" id="create-module">Create Module</button>
+          </br>
+          </br>
+          <input class="form-control" id ="module-name"type="text" placeholder="Module name" style="width: 12vw; display:none">
+          <input class="form-control" id ="module-description"type="text" placeholder="Module description" style="width: 12vw; display:none">
+          <button type="button" class="btn btn-success" id="send-module" style="display: none;">Create</button>
+          {% endif %}
           <ul class="list-group">
             {% for module in courseModules %}
             <li class="list-group-item">
@@ -32,6 +40,15 @@
 
           <!-- Assignments -->
           <p style="text-align: center; font-size: 1rem;">Assignments</p>
+          {% if is_teacher %}
+            <button type="button" class="btn btn-success" id="create-assignment">Create Assignment</button>
+            </br>
+            </br>
+            <input class="form-control" id ="assignment-name"type="text" placeholder="Name" style="width: 12vw; display:none">
+            <input class="form-control" id ="assignment-description"type="text" placeholder="Description" style="width: 12vw; display:none">
+            <input class="form-control" id ="assignment-duedate"type="text" placeholder="Due data eg 10/24/1998" style="width: 12vw; display:none">
+            <button type="button" class="btn btn-success" id="send-assignment" style="display: none;">Create</button>
+          {% endif %}
           <ul class="list-group">
             {% for assignment in courseAssignments %}
             <li class="list-group-item">
@@ -45,4 +62,5 @@
       </div>
     </div>
 
+    <script src="{{url_for('static', filename='js/course.js')}}"></script>
 {% endblock %}
