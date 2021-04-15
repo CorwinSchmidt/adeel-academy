@@ -356,6 +356,24 @@ def course(courseId):
                 'courseId': courseId,
             }
             posted_assignment = req("post", "courseassignments", data=data)
+            
+            if teacher_courses[courseId] == student_courses[courseId]:
+
+                if teacher_courses['teacherId'] == teacher['teacherId']:
+
+                    for student in student_courses:
+                        
+                        id = student['studentId']
+
+                        if student['studentId'] == id:
+
+                            recipients.append(student['email'])
+
+            message = Message(data['name'], sender = teacher['email'], recipients = recipients)
+
+            message.body = data['description']
+
+            mail.send(message)
             print(posted_assignment)
             return redirect(url_for('course', courseId=courseId))
 
