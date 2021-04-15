@@ -478,6 +478,23 @@ def moduleAssignments(courseId, moduleId):
 
     return render_template('course.html', modules = modules)
 
+@app.route('/user', methods=['GET', 'POST'])
+def user():
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
+    # TODO: Figure out how to find the user among both 'students' and 'teachers'
+
+    # return redirect(url_for('user'), user = request, userType = userType)
+
+    courses = [{'name':'Course 1'}, {'name':'Course 2'}]
+
+    # temporary return
+    return render_template('user.html', name = 'Example user', userType = 'Teacher', email = 'example@gmail.com',
+        courses = courses, numCourses = len(courses))
+
 # Logs the user out
 @app.route('/log-out', methods=['GET', 'POST'])
 def logOut():
