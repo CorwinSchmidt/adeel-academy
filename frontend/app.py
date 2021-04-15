@@ -393,7 +393,7 @@ def course(courseId):
 
                     for student in student_courses:
                         
-                        id = student['studentId']
+                        id = student_courses['studentId']
 
                         if student['studentId'] == id:
 
