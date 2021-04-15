@@ -305,7 +305,8 @@ def courses():
     request = req("get", "courses")
     for i in request:
         courses.append([i["name"], i["description"], i["courseId"]])
-
+    
+    isTeacher = False
     if session["role"] == "teacher":
         isTeacher = True
 
@@ -405,7 +406,7 @@ def studentAssignments():
     return render_template('student-assignments.html')
 
 # Displays an assignment
-@app.route('/assignments/<assignmentId>')
+@app.route('/assignments/<assignmentId>', methods=['GET', 'POST'])
 def assignment(assignmentId):
 
     #  when not logged in, redirect to login page
@@ -416,18 +417,41 @@ def assignment(assignmentId):
     date = str(assignment_req['dueDate'])
     assignment_req['dueDate'] = date[:2] + '/' + date[2:4] + "/" + date[4:]
 
-    print(assignment_req)
 
     course_req = req("get", "courses", id=assignment_req['courseId'])
     
     is_teacher = False
     if session["role"] == "teacher":
         is_teacher = True
+    else:
+        # find if assignment is already complete by current student
+        student_assignment_req = req('get', 'studentassignments')
+        submitted = False
+        text = ''
+        for i in student_assignment_req:
+            if int(i['courseAssignmentId']) == int(assignmentId) and int(i['studentId']) == int(session['studentId']):
+                submitted = True
+                text = i['text']
+                break
+            
+    if request.method == 'POST' and request.get_json()['type'] == 'student_submit':
+        # insert students submission into api
+        data = {
+            'courseAssignmentId': assignmentId,
+            'studentId': session['studentId'],
+            'text': request.get_json()['text'],
+            'grade': -1
+        }
+        text_req = req('post', 'studentassignments', data=data)
+        print(text_req)
+
     
     return render_template('assignment.html', 
         assignment = assignment_req, 
         course_title = course_req['name'],
-        is_teacher= is_teacher)
+        is_teacher= is_teacher,
+        submitted=submitted,
+        text=text)
 
 # Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])

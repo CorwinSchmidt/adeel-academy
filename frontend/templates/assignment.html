@@ -19,7 +19,7 @@
           <p style="text-align: center;">{{ assignment.name }}</p>
           <p style="text-align: center;">{{ assignment.description }}</p>
           <p style="text-align: center;">{{ assignment.dueDate }}</p>
-          {% if is_teacher == false %}
+          {% if is_teacher == false and submitted == false %}
             <button type="button" class="btn btn-success" id="assignment">Submit Assignment</button>
             </br>
             </br>
@@ -27,6 +27,11 @@
           
             <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
           {% endif %}
+          {% if submitted %}
+          <h3>Your Submission:</h3>
+            <p>{{ text }}</p>
+          {% endif %}
+
       </div>
     </div>
   </div>

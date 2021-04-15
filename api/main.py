@@ -1224,19 +1224,20 @@ class StudentAssignment(db.Model):
 
     studentAssignmentId = db.Column(db.Integer, primary_key = 50)
     courseAssignmentId = db.Column(db.Integer, db.ForeignKey('courseassignment.courseAssignmentId'))
+    studentId = db.Column(db.Integer, db.ForeignKey('student.studentId'))
     text = db.Column(db.String(50000))
     grade = db.Column(db.Float)
 
     def __repr__(self):
-        return "studentAssignmentId: {}, courseAssignmentId: {}, text: {}, grade: {}".format(self.studentAssignmentId, self.courseAssignmentId, self.text, self.grade,)
+        return "studentAssignmentId: {}, courseAssignmentId: {}, studentId: {} text: {}, grade: {}".format(self.studentAssignmentId, self.courseAssignmentId, self.studentId, self.text, self.grade)
 
 # Marshmallow Schema
 class StudentAssignmentSchema(ma.Schema):
     class Meta:
-        fields = ("studentAssignmentId", "courseAssignmentId", "text", "grade")
+        fields = ("studentAssignmentId", "courseAssignmentId", "studentId", "text", "grade")
 
 # Schema for Multiple Student Assignments
-students_assignment_schema = StudentAssignmentSchema(many = True)
+student_assignments_schema = StudentAssignmentSchema(many = True)
 
 # Schema for Single Student Assignments
 student_assignment_schema = StudentAssignmentSchema()
@@ -1245,20 +1246,19 @@ student_assignment_schema = StudentAssignmentSchema()
 class StudentAssignmentListResource(Resource):
     def get(self):
         student_assignment = StudentAssignment.query.all()
-        return students_assignment_schema.dump(student_assignment)
+        return student_assignments_schema.dump(student_assignment)
 
     def post(self):
         newStudentAssignment = StudentAssignment(
-            name = request.json['name'],
-            description = request.json['description'],
-            dueDate = request.json['dueDate'],
+            courseAssignmentId = request.json['courseAssignmentId'],
+            studentId = request.json['studentId'],
+            text = request.json['text'],
             grade = request.json['grade'],
-            turnedIn = request.json['turnedIn']
         )
 
         db.session.add(newStudentAssignment)
         db.session.commit()
-        return students_assignment_schema.dump(newStudentAssignment)
+        return student_assignment_schema.dump(newStudentAssignment)
 
 # Endpoint for a Single Student Assignment
 class StudentAssignmentResource(Resource):
@@ -1299,8 +1299,8 @@ class StudentAssignmentResource(Resource):
 
 
 # Register Endpoints
-api.add_resource(StudentAssignmentListResource, '/studentAssignments')
-api.add_resource(StudentAssignmentResource, '/studentAssignments/<int:assignmentId>')
+api.add_resource(StudentAssignmentListResource, '/studentassignments')
+api.add_resource(StudentAssignmentResource, '/studentassignments/<int:assignmentId>')
 
 # Course
 class Course(db.Model):
