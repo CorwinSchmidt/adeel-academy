@@ -9,7 +9,18 @@ import json
 from req import req
 
 app = Flask(__name__)
+mail = Mail(app)
+
 app.config['SECRET_KEY'] = '23r23423988a8f8fsw12'
+
+app.config['MAIL_SERVER'] = 'smtp.google.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'david.chett2020@gmail.com'
+app.config['MAIL_PASSWORD'] = "hereismydemo"
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 CORS(app=app)
 
 # forms
@@ -340,6 +351,25 @@ def course(courseId):
                 'courseId' : courseId
             }
             posted_course_module = req("post", "coursemodules", data)
+            
+            if teacher_courses[courseId] == student_courses[courseId]:
+
+                if teacher_courses['teacherId'] == teacher['teacherId']:
+
+                    for student in student_courses:
+
+                        id = student_courses['studentId']
+
+                        if student['studentId'] == id:
+
+                            module_recipients.append(student['email'])
+
+            message = Message(data['name'], sender = teacher['email'], recipients = recipients)
+
+            message.body = data['description']
+
+            mail.send(message)
+            
             print("posted", posted_module)
             return redirect('course', courseId)
 
