@@ -7,6 +7,7 @@ from wtforms import Form, StringField, PasswordField, validators, SubmitField, R
 import requests
 import json
 from req import req
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 mail = Mail(app)
