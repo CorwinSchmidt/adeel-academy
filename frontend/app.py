@@ -357,6 +357,11 @@ def course(courseId):
     is_teacher = False
     if session.get("role") == 'teacher':
         is_teacher = True
+        
+    teacher_courses = req("GET", "teachercourses")
+    student_courses = req("GET", "studentcourses")
+    teachers = req("GET", "teachers")
+    students = req("GET", "students")
 
     # when post from frontend
     if request.method == 'POST':
