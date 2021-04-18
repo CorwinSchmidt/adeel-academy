@@ -511,6 +511,11 @@ def results():
     modules = []
     assignments = []
 
+    # getting all courses for testing
+    request = req("get", "courses")
+    for i in request:
+        courses.append([i["name"], i["description"], i["courseId"]])
+
     return render_template('search-results.html', users=users, courses=courses, modules=modules, assignments=assignments)
 
 # Displays the Module Documents of a Given Course  
