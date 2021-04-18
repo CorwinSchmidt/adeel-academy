@@ -31,6 +31,35 @@
             <p>{{ text }}</p>
           {% endif %}
 
+          {% if is_teacher  %}
+            <ul class="list-group list-group-flush">
+
+              {% for sub in submissions %}
+                <li class="list-group-item">
+                  <h2>{{ sub.name }}</h2>
+
+                {% if sub.grade == -1 %}
+                <!-- when not graded -->
+                  <p style="color: red;">Not graded!</p>
+                  
+                {% else %}
+                  <p style="color: green;">Graded: {{ sub.grade }}</p>
+
+                {% endif %}
+                <h3>Submission:</h3>
+                <p>{{ sub.text}}</p>
+                <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Grade" style="width: 5vw;">
+
+                <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Grade</button>
+              </li>
+
+              {% endfor %}
+                
+
+            </ul>
+          {% endif %}
+
+
       </div>
     </div>
   </div>

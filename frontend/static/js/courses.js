@@ -25,7 +25,7 @@ function sendToBackend(id) {
             // code that can access both here
             if (response.status >= 400){
                 console.log("error sending course to backend");
-            } else
+            }
         });
     });
 }

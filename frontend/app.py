@@ -1,3 +1,4 @@
+from re import sub
 from typing import NamedTuple, NoReturn
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
 from flask_cors import CORS
@@ -491,12 +492,24 @@ def assignment(assignmentId):
     course_req = req("get", "courses", id=assignment_req['courseId'])
     submitted = ''
     text = ''
+    submissions = []
     is_teacher = False
     if session["role"] == "teacher":
         is_teacher = True
-
         # get all student submissions for current courses
-        # submissions_req = req('get', '')
+        submissions_req = req('get', 'studentassignments')
+        submissions = []
+        for i in submissions_req:
+            if i['courseAssignmentId'] == int(assignmentId):
+                print("found")
+                student_req = req('get', 'students', id=i['studentId'])
+                submissions.append({
+                    "name": student_req['name'],
+                    "grade": i['grade'],
+                    "text": i['text'],
+                    "studentAssignmentId": i['studentAssignmentId']
+                })
+        print(submissions)
 
     if not is_teacher:
         # find if assignment is already complete by current student
@@ -526,7 +539,8 @@ def assignment(assignmentId):
         course_title = course_req['name'],
         is_teacher= is_teacher,
         submitted=submitted,
-        text=text)
+        text=text,
+        submissions=submissions)
 
 # Displays the results of a search conducted from the 
 @app.route('/results', methods=['GET', 'POST'])
