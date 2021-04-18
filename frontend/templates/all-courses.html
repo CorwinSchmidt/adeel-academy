@@ -14,7 +14,6 @@
         <div class="card" style="width: 100%;">
             <ul class="list-group list-group-flush">
                 {% for course in courses %}
-                <a href="/course/{{ course[2] }}">
                     <li class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="flex-column">
@@ -22,11 +21,10 @@
                                 <p>{{ course[1][:50] }} </p>
                             </div>
                             <div class="flex-column">
-                                <button type="button" id="register-to-{{ course[2] }}" class="btn btn-secondary">Register</button>
+                                <button type="button" id="{{ course[2] }}" class="btn btn-secondary register" >Register</button>
                             </div>
                         </div>
                     </li>
-                </a>
                 {% endfor %}
             </ul>
         </div>

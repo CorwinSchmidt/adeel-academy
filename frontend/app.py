@@ -1,7 +1,5 @@
 from typing import NamedTuple, NoReturn
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
-from requests.api import get
-from requests.models import RequestHooksMixin
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -13,7 +11,6 @@ app = Flask(__name__)
 mail = Mail(app)
 
 app.config['SECRET_KEY'] = '23r23423988a8f8fsw12'
-
 app.config['MAIL_SERVER'] = 'smtp.google.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'david.chett2020@gmail.com'
@@ -314,14 +311,38 @@ def courses():
         return redirect(url_for('log_in'))
     
     courses = []
-    request = req("get", "courses")
-    for i in request:
+    courses_req = req("get", "courses")
+    for i in courses_req:
         courses.append([i["name"], i["description"], i["courseId"]])
     
     isTeacher = False
     if session["role"] == "teacher":
         isTeacher = True
 
+    if request.method == 'POST':
+        course_id = request.get_json()['courseId']
+        
+        if isTeacher:
+            course_enroll_req = req(
+                'post', 
+                'teachercourses', 
+                data = {
+                    'courseId' : course_id,
+                    'teacherId' : session['teacherId']
+                }
+            )
+        else:
+            course_enroll_req = req(
+                'post', 
+                'studentcourses', 
+                data = {
+                    'courseId' : course_id,
+                    'studentId' : session['studentId']
+                }
+            )
+
+
+        # print(request.get_json())
     return render_template('all-courses.html', courses=courses, isTeacher = isTeacher)
 
 # Displays a single course and its information
@@ -468,11 +489,16 @@ def assignment(assignmentId):
 
 
     course_req = req("get", "courses", id=assignment_req['courseId'])
-    
+    submitted = ''
+    text = ''
     is_teacher = False
     if session["role"] == "teacher":
         is_teacher = True
-    else:
+
+        # get all student submissions for current courses
+        # submissions_req = req('get', '')
+
+    if not is_teacher:
         # find if assignment is already complete by current student
         student_assignment_req = req('get', 'studentassignments')
         submitted = False
