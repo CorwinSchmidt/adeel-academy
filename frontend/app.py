@@ -468,41 +468,6 @@ def course(courseId):
             print(posted_assignment)
             return redirect(url_for('course', courseId=courseId))
 
-
-
-
-        if request.get_json()['type'] == 'create_assignment':
-            name = request.get_json()['name']
-            description = request.get_json()['description']
-            due_date = request.get_json()['dueDate'].replace("/","")
-            print(request.get_json())
-            data={
-                'name': name, 
-                'description': description,
-                'dueDate': due_date,
-                'courseId': courseId,
-            }
-            posted_assignment = req("post", "courseassignments", data=data)
-            
-            if teacher_courses[courseId] == student_courses[courseId]:
-
-                if teacher_courses['teacherId'] == teacher['teacherId']:
-
-                    for student in student_courses:
-                        
-                        id = student_courses['studentId']
-
-                        if student['studentId'] == id:
-
-                            recipients.append(student['email'])
-
-            message = Message(data['name'], sender = teacher['email'], recipients = recipients)
-
-            message.body = data['description']
-
-            mail.send(message)
-            print(posted_assignment)
-            return redirect(url_for('course', courseId=courseId))
         
         if request.get_json()['type'] == 'create_announcement':
 
@@ -584,6 +549,13 @@ def course(courseId):
 
 
 
+    #get announcements
+    req_announcements = req('get', 'announcements', id = courseId)
+
+    for i in req_announcements:
+
+        annoucement = req('get', 'announcements', id = i['announcementId'])
+        announcements.append([annoucement['announcementId'], annoucement['name']])
 
     # This is temporary, for design purposes:
     return render_template(
