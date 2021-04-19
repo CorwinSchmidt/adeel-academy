@@ -547,21 +547,104 @@ def assignment(assignmentId):
         text=text,
         submissions=submissions)
 
-# Displays the results of a search conducted from the 
-@app.route('/results', methods=['GET', 'POST'])
+@app.route('/results/', methods=['GET', 'POST'])
 def results():
-    # need to get users and courses that match input in search bar
-    users = []
+    # http://127.0.0.1:8000/results/?search=asdf
     courses = []
     modules = []
     assignments = []
 
-    # getting all courses for testing
-    request = req("get", "courses")
-    for i in request:
-        courses.append([i["name"], i["description"], i["courseId"]])
+    '''
+    # courses request carries:
+        course:
+            id
+            name
+            description
+        assignments:
+            id
+            name
+            description
+        modules:
+            id
+            name
+            description
+    '''   
 
-    return render_template('search-results.html', users=users, courses=courses, modules=modules, assignments=assignments)
+    course_req = req('get', 'courses')
+
+    # course object contains course data, assignment data, and module data
+    for course in course_req:
+        course_dic = {
+            'type': 'course',
+            'id': course['courseId'],
+            'name': course['name'],
+            'description': course['description'],
+        }
+        courses.append(course_dic)
+
+        for assignment in course['assignments']:
+            assignment_dic = {
+                'type': 'assignment',
+                'id': assignment['courseAssignmentId'],
+                'name': assignment['name'],
+                'description': assignment['description'],
+            }
+            assignments.append(assignment_dic)
+
+        for module in course['modules']:
+            module_dic = {
+                'type': 'module',
+                'id': module['moduleId'],
+                'name': module['name'],
+                'description': module['description'],
+            }
+            modules.append(module_dic)
+    
+    search_string = request.args.get('search').replace("%20", " ")
+    search_params = request.args.get('filter').replace("%20", " ")
+    params_list = search_params.split()
+
+    results = []
+
+    def query_courses():
+        for course in courses:
+            # if search matches name or description of course
+            if search_string in course.get('name') or search_string in course.get('description'):
+                results.append(course)
+    def query_modules():
+        for module in modules:
+            # if search matches name or description of course
+            if search_string in module.get('name') or search_string in module.get('description'):
+                results.append(module)
+    def query_assignments():
+        for assignment in assignments:
+            # if search matches name or description of course
+            if search_string in assignment.get('name') or search_string in assignment.get('description'):
+                results.append(assignment)
+
+    if params_list[0] == 'all':
+        query_courses()
+        query_modules()
+        query_assignments()
+    
+    if 'modules' in params_list:
+        query_modules()
+        
+    if 'assignments' in params_list:
+        query_assignments()
+
+    if 'courses' in params_list:
+        query_courses()
+
+    print("results")
+    print(results)
+
+    return render_template('search-results.html', results=results)
+
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
 
 # Displays the Module Documents of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])

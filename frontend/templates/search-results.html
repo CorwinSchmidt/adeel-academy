@@ -6,78 +6,16 @@
 
 {% block body %}
     <div class="container">
-        <!-- Display User Results -->
-        <!-- <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#usersCollapse" role="button" aria-expanded="false" aria-controls="usersCollapse" style="margin-top: 1rem; background-color: chocolate;">
-                User Results
-            </a>
-        </p>
-        <div class="collapse" id="usersCollapse">
-            <ul class="list-group">
-                {% for user in users %}
-                <li class="list-group-item">
-                  <p>{{ user }}</p>
-                </li>
-                {% endfor %}
-              </ul>
-        </div> -->
-
-        <!-- Display Course Results -->
-        <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#coursesCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
-                Course Results
-            </a>
-        </p>
-        <div class="collapse" id="coursesCollapse">
-            <ul class="list-group list-group-flush">
-                {% for course in courses %}
-                <a href="/course/{{ course[2] }}">
-                    <li class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="flex-column">
-                                <h3>{{ course[0][:40] }} </h3>
-                                <p>{{ course[1][:50] }} </p>
-                            </div>
-                            <div class="flex-column">
-                                <button type="button" id="register-to-{{ course[2] }}" class="btn btn-secondary">Register</button>
-                            </div>
-                        </div>
-                    </li>
-                </a>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <!-- Display Module Results -->
-        <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#modulesCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
-                Module Results
-            </a>
-        </p>
-        <div class="collapse" id="modulesCollapse">
-            <ul class="list-group">
-                {% for module in modules %}
-                <li class="list-group-item">
-                    <a href="/module/{{ module.moduleId }}/home" style="color: black;">{{ module.name }}</a>
-                </li>
-                {% endfor %}
-              </ul>
-        </div>
-
-        <!-- Display Assignment Results -->
-        <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#assignmentsCollapse" role="button" aria-expanded="false" aria-controls="coursesCollapse" style="margin-top: 1rem; background-color: chocolate;">
-                Assignment Results
-            </a>
-        </p>
-        <div class="collapse" id="assignmentsCollapse">
-            <ul class="list-group">
-                {% for assignment in assignments %}
-                <li class="list-group-item">
-                    <a href="/module/{{ assignment.assignmentId }}/home" style="color: black;">{{ assignment.name }}</a>
-                </li>
-                {% endfor %}
-              </ul>
-        </div>
+        {% for result in results %}
+            <!-- example of a course result -->
+            <p> {{ result }}</p> 
+            
+            {% if result.type == 'course' %}
+                <!-- when its a course for example -->
+            {% endif %}
+        {% endfor %}
     </div>
+
+    <script src="{{url_for('static', filename='js/results.js')}}"></script>
+
 {% endblock %}

@@ -1311,9 +1311,10 @@ class Course(db.Model):
     students = db.relationship("StudentCourses")
     teachers = db.relationship("TeacherCourses")
     modules = db.relationship("Module")
+    assignments = db.relationship("CourseAssignment")
 
     def __repr__(self):
-        return "courseId: {}, Name: {}, description: {}, students: {}, teachers: {}, modules: {}".format(self.courseId, self.name, self.description, self.students, self.teachers, self.modules)
+        return "courseId: {}, Name: {}, description: {}, students: {}, teachers: {}, modules: {}, courses: {}".format(self.courseId, self.name, self.description, self.students, self.teachers, self.modules, self.assignments)
 
 class CourseSchema(ma.Schema):
     courseId = fields.Int()
@@ -1322,9 +1323,10 @@ class CourseSchema(ma.Schema):
     students = ma.Nested(students_schema)
     teachers = ma.Nested(teachers_schema)
     modules = ma.Nested(modules_schema)
+    assignments = ma.Nested(courseAssignmentsSchema)
 
     class Meta:
-        fields = ("courseId", "name", "description", "students", "teachers", "modules")
+        fields = ("courseId", "name", "description", "students", "teachers", "modules", "assignments")
 
 courses_schema = CourseSchema(many=True)
 
