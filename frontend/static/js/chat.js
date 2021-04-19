@@ -1,3 +1,5 @@
+// This script is for searching for a user
+
 let url_base = "http://127.0.0.1:5000/" 
 
 

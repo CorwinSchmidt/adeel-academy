@@ -778,8 +778,8 @@ def moduleAssignments(courseId, moduleId):
 
     return render_template('course.html', modules = modules)
 
-@app.route('/user', methods=['GET', 'POST'])
-def user():
+@app.route('/user/<loginId>', methods=['GET', 'POST'])
+def user(loginId):
 
     #  when not logged in, redirect to login page
     if session.get("loginId") is None:
