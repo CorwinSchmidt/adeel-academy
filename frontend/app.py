@@ -1,3 +1,4 @@
+import os
 from re import sub
 from typing import NamedTuple, NoReturn
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
@@ -6,20 +7,13 @@ from wtforms import Form, StringField, PasswordField, validators, SubmitField, R
 import requests
 import json
 from req import req
-from flask_mail import Mail, Message
+import smtplib
+from email.message import EmailMessage
 
 app = Flask(__name__)
-mail = Mail(app)
 
 app.config['SECRET_KEY'] = '23r23423988a8f8fsw12'
-app.config['MAIL_SERVER'] = 'smtp.google.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'david.chett2020@gmail.com'
-app.config['MAIL_PASSWORD'] = "hereismydemo"
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
 
-mail = Mail(app)
 CORS(app=app)
 
 # forms
@@ -358,10 +352,14 @@ def course(courseId):
     if session.get("role") == 'teacher':
         is_teacher = True
         
+            
     teacher_courses = req("GET", "teachercourses")
     student_courses = req("GET", "studentcourses")
     teachers = req("GET", "teachers")
     students = req("GET", "students")
+    logins = req("GET", 'logins')
+    module_recipients = []
+    recipients = []
 
     # when post from frontend
     if request.method == 'POST':
@@ -382,24 +380,95 @@ def course(courseId):
             
             if teacher_courses[courseId] == student_courses[courseId]:
 
-                if teacher_courses['teacherId'] == teacher['teacherId']:
+                if teacher_courses['teacherId'] == teachers['teacherId']:
 
                     for student in student_courses:
 
-                        id = student_courses['studentId']
+                        id = student['studentId']
 
-                        if student['studentId'] == id:
+                        if students['studentId'] == id:
 
                             module_recipients.append(student['email'])
+            msg = EmailMessage()
+            msg['Subject'] = data['name']
+            if teachers['loginId'] == logins['loginId']:
 
-            message = Message(data['name'], sender = teacher['email'], recipients = recipients)
+                msg['From'] = teachers['email']
 
-            message.body = data['description']
+            msg['To'] = module_recipients
+            msg.set_content(data['desciption'])
+    
+            teacher_email = ''
+            teacher_password = ''
+            if teachers['loginId'] == logins['loginId']:
 
-            mail.send(message)
+                teacher_email = logins['email']
+                teacher_password = logins['password']
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+
+
+                smtp.login(teacher_email, teacher_password)
+
+                smtp.send_message(msg)
             
             print("posted", posted_module)
             return redirect('course', courseId)
+
+
+        if request.get_json()['type'] == 'create_assignment':
+            name = request.get_json()['name']
+            description = request.get_json()['description']
+            due_date = request.get_json()['dueDate'].replace("/","")
+            print(request.get_json())
+            data={
+                'name': name, 
+                'description': description,
+                'dueDate': due_date,
+                'courseId': courseId,
+            }
+            posted_assignment = req("post", "courseassignments", data=data)
+            
+            teacher_email2 = ''
+            teacher_password2 = ''
+
+            if teacher_courses[courseId] == student_courses[courseId]:
+
+                if teacher_courses['teacherId'] == teachers['teacherId']:
+
+                    for student in student_courses:
+                        
+                        id = student['studentId']
+
+                        if students['studentId'] == id:
+
+                            recipients.append(student['email'])
+
+            a_msg = EmailMessage()
+            a_msg['Subject'] = data['name']
+
+            if teachers['loginId'] == logins['loginId']:
+
+                a_msg['From'] = teachers['email']
+            
+            a_msg['To'] = recipients
+            a_msg.set_content(data['description'])
+
+            if teachers['loginId'] == logins['loginId']:
+
+                teacher_email2 = logins['email']
+                teacher_password2 = logins['password']
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+
+                smtp.login(teacher_email2, teacher_password2)
+
+                smtp.send_message(a_msg)
+
+            print(posted_assignment)
+            return redirect(url_for('course', courseId=courseId))
+
+
 
 
         if request.get_json()['type'] == 'create_assignment':
