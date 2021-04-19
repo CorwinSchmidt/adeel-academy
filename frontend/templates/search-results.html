@@ -5,15 +5,48 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        {% for result in results %}
-            <!-- example of a course result -->
-            <p> {{ result }}</p> 
-            
-            {% if result.type == 'course' %}
-                <!-- when its a course for example -->
-            {% endif %}
-        {% endfor %}
+    <div class="container" style="margin-top: 1rem;">
+        <!-- Courses -->
+        <h3>Courses</h3>
+        <div class="card" style="width: 100%; margin-bottom: 1rem;">
+            <ul class="list-group list-group-flush">
+                {% for result in results %}
+                    {% if result.type == 'course' %}
+                    <li class="list-group-item">
+                        <a href="/course/{{ result.id }}" style="color: black;">{{ result['name'] }} </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Modules -->
+        <h3>Modules</h3>
+        <div class="card" style="width: 100%; margin-bottom: 1rem;">
+            <ul class="list-group list-group-flush">
+                {% for result in results %}
+                    {% if result.type == 'module' %}
+                    <li class="list-group-item">
+                        <a href="/module/{{ result.id }}" style="color: black;">{{ result['name'] }} </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Assignments -->
+        <h3>Assignments</h3>
+        <div class="card" style="width: 100%; margin-bottom: 1rem;">
+            <ul class="list-group list-group-flush">
+                {% for result in results %}
+                    {% if result.type == 'assignment' %}
+                    <li class="list-group-item">
+                        <a href="/assignments/{{ result.id }}" style="color: black;">{{ result['name'] }} </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
     <script src="{{url_for('static', filename='js/results.js')}}"></script>

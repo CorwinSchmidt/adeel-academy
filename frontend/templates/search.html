@@ -7,22 +7,17 @@
 
 {% block body %}
     <div class="container" style="padding-top: 1rem;">
-        <div class="row">
-            <input class="form-control" id ="search-bar"type="text" placeholder="Enter search query..." style="width: 30vw">
+        <input class="form-control" id ="search-bar" type="text" placeholder="Enter search query..." style="width: 30vw; margin-bottom: 1rem;">
+        
+            <input type="checkbox" id="courses" name="courses" value="courses">
+            <label for="vehicle1"> Courses</label><br>
+            <input type="checkbox" id="modules" name="modules" value="modules">
+            <label for="vehicle2"> Modules</label><br>
+            <input type="checkbox" id="assignments" name="assignments" value="assignments">
+            <label for="vehicle3"> Assignments</label><br><br>
 
-
-            <input type="checkbox" class="custom-control-input" id="courses">
-            <label class="custom-control-label" for="courses">Courses</label>
-            <input type="checkbox" class="custom-control-input" id="modules">
-            <label class="custom-control-label" for="modules">Modules</label>
-            <input type="checkbox" class="custom-control-input" id="assignments">
-            <label class="custom-control-label" for="assignments">Assignments</label>
-
-
-            <button type="button" id="search" class="btn btn-success">Search</button>
-        </div>
+        <button type="button" id="search" class="btn btn-success">Search</button>
     </div>
-
 
     <script src="{{url_for('static', filename='js/search.js')}}"></script>
 
