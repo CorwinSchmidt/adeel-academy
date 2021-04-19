@@ -503,7 +503,60 @@ def course(courseId):
             mail.send(message)
             print(posted_assignment)
             return redirect(url_for('course', courseId=courseId))
+        
+        if request.get_json()['type'] == 'create_announcement':
 
+            name = request.get_json()['name']
+            description = request.get_json()['description']
+            timestamp = request.get_json()['timeStamp'].replace("/","")
+            print(request.get_json())
+
+            data = {
+                'name' : name,
+                'description' : description,
+                'timeStamp' : timestamp, 
+                'courseId' : courseId
+            }
+            posted_announcement = req('POST', 'announcements', data = data)
+
+            t_email = ''
+            t_password = ''
+
+            if teacher_courses[courseId] == student_courses[courseId]:
+
+                if teacher_courses['teacherId'] == teachers['teacherId']:
+
+                    for student in student_courses:
+                        
+                        id = student['studentId']
+
+                        if students['studentId'] == id:
+
+                            announcement_recipients.append(student['email'])
+
+            announcement_msg = EmailMessage()
+            announcement_msg['Subject'] = data['name']
+
+            if teachers['loginId'] == logins['loginId']:
+
+                announcement_msg['From'] = teachers['email']
+
+            announcement_msg['To'] = announcement_recipients
+            announcement_msg.set_content(data['description'])
+
+            if teachers['loginId'] == logins['loginId']:
+
+                t_email = logins['email']
+                t_password = logins['password']
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+
+                smtp.login(t_email, t_password)
+
+                smtp.send_message(announcement_msg)
+
+            print(posted_announcement)
+            return redirect(url_for('course', courseId = courseId))  
 
     modules = []
     assignments = []
