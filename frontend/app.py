@@ -635,7 +635,7 @@ def assignment(assignmentId):
     
     return render_template('assignment.html', 
         assignment = assignment_req, 
-        course_title = course_req['name'],
+        course = course_req,
         is_teacher= is_teacher,
         submitted=submitted,
         text=text,

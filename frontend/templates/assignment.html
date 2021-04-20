@@ -5,74 +5,61 @@
 {% endblock %}
 
 {% block body %}
-<div class="container" >
-    <div class="row" style="margin-top: 1rem; border-bottom: 2px solid black; text-align: center;">
-      <h6 style="font-size: 1.5rem;">{{ course_title }}</h6>
+<div class="container" style="margin-top: 1rem;">
+    <div class="row" style="padding-bottom: 1rem; border-bottom: 2px solid black;">
+      <a href="/course/{{ course.courseId }}" style="color: black; font-size: 1.5rem;">Course: {{ course.name }}</a>
     </div>
-    <div class="row" style="margin-top: 1rem;">
-      <div class="col-2">
-        <!-- Sidebar -->
+    <div>
+      <div class="row" style="border-bottom: 2px solid black;">
+        <h3 style="margin-top: 1rem;">{{ assignment.name }}</h3>
+        <p>{{ assignment.description }}</p>
+        <p>Due Date: {{ assignment.dueDate }}</p>
+      </div>
+
+      <!-- Student view -->
+      {% if not is_teacher %}
+        {% if not submitted %}
+          <button type="button" class="btn btn-success" id="assignment">Submit Assignment</button>
+          </br>
+          </br>
+          <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 50vw; display:none">
         
-      </div>
-      <div class="col-10" style="border-left: 1px solid black;">
-          <p style="text-align: center;">{{ assignment.name }}</p>
-          <p style="text-align: center;">{{ assignment.description }}</p>
-          <p style="text-align: center;">{{ assignment.dueDate }}</p>
-
-
-
-          {% if is_teacher == false and submitted == false %}
-            <button type="button" class="btn btn-success" id="assignment">Submit Assignment</button>
-            </br>
-            </br>
-            <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 50vw; display:none">
-          
-            <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
-            <script src="{{url_for('static', filename='js/assignment-student.js')}}"></script>
-
-          {% endif %}
-          {% if submitted %}
+          <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
+          <script src="{{url_for('static', filename='js/assignment-student.js')}}"></script>
+        {% endif %}
+        {% if submitted %}
           <h3>Your Submission:</h3>
-            <p>{{ text }}</p>
-          {% endif %}
+          <p>{{ text }}</p>
+        {% endif %}
+      {% endif %}
 
-
-
-
-          {% if is_teacher  %}
-            <ul class="list-group list-group-flush">
-
-              {% for sub in submissions %}
-                <li class="list-group-item">
-                  <h2>{{ sub.name }}</h2>
-
-                {% if sub.grade == -1 %}
-                <!-- when not graded -->
-                  <p style="color: red;">Not graded!</p>
-                  <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Grade" style="width: 5vw;">
-
-                  <div id="assignment-id" class="grade-id" style="display: none;">{{ sub.studentAssignmentId }}</div>
-
-                  <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Grade</button>
-                  
-                {% else %}
-                  <p style="color: green;">Graded: {{ sub.grade }}</p>
-
-                {% endif %}
-                <h3>Submission:</h3>
-                <p>{{ sub.text}}</p>
-                
-              </li>
-
-              {% endfor %}
-                
-
-            </ul>
-            <script src="{{url_for('static', filename='js/assignment-teacher.js')}}"></script>
-          {% endif %}
-
-
-      </div>
+      <!-- Teacher view -->
+      {% if is_teacher  %}
+        <ul class="list-group list-group-flush">
+          {% for sub in submissions %}
+            <li class="list-group-item">
+              <h2>{{ sub.name }}</h2>
+            {% if sub.grade == -1 %}
+            <!-- when not graded -->
+              <div class="d-flex flex-row align-items-center">
+                <p style="color: red; margin-right: 1rem;">Not graded!</p>
+                <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Input Grade %" style="width: 8.5rem; margin-right: 1rem">
+                <div id="assignment-id" class="grade-id" style="display: none;">{{ sub.studentAssignmentId }}</div>
+                <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Submit Grade</button>
+              </div>
+      
+            {% else %}
+              <p style="color: green;">Graded: {{ sub.grade }}</p>
+            {% endif %}
+            <h3>Submission:</h3>
+            <p>{{ sub.text}}</p>
+      
+          </li>
+          {% endfor %}
+      
+        </ul>
+        <script src="{{url_for('static', filename='js/assignment-teacher.js')}}"></script>
+      {% endif %}
     </div>
   </div>
 
