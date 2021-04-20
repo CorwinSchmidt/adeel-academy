@@ -1,0 +1,18 @@
+{% extends "base-logged-in.html" %}
+
+{% block header %}
+    <title>{{ module.name }}</title>
+{% endblock %}
+
+{% block body %}
+<div class="container" >
+  <h1>{{ module.name}}</h1>
+  <p>{{ module.description }}</p>
+
+</div>
+
+<script src="{{url_for('static', filename='js/module.js')}}"></script>
+
+
+
+{% endblock %}

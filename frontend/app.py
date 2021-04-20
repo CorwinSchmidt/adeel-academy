@@ -740,6 +740,19 @@ def search():
     return render_template('search.html')
 
 
+# module page
+@app.route('/module/<module_id>')
+def modules(module_id):
+
+    module_req = req('get', 'modules', id=module_id)
+
+    is_teacher = False
+    if session['role'] == 'teacher': is_teacher = True
+
+
+    return render_template('module.html', module=module_req, is_teacher=is_teacher)
+
+
 # Displays the Module Documents of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
 def moduleDocuments(courseId, moduleId):

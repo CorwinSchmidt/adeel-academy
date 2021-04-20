@@ -18,6 +18,9 @@
           <p style="text-align: center;">{{ assignment.name }}</p>
           <p style="text-align: center;">{{ assignment.description }}</p>
           <p style="text-align: center;">{{ assignment.dueDate }}</p>
+
+
+
           {% if is_teacher == false and submitted == false %}
             <button type="button" class="btn btn-success" id="assignment">Submit Assignment</button>
             </br>
@@ -25,11 +28,16 @@
             <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 50vw; display:none">
           
             <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
+            <script src="{{url_for('static', filename='js/assignment-student.js')}}"></script>
+
           {% endif %}
           {% if submitted %}
           <h3>Your Submission:</h3>
             <p>{{ text }}</p>
           {% endif %}
+
+
+
 
           {% if is_teacher  %}
             <ul class="list-group list-group-flush">
@@ -57,6 +65,7 @@
                 
 
             </ul>
+            <script src="{{url_for('static', filename='js/assignment-teacher.js')}}"></script>
           {% endif %}
 
 
@@ -64,6 +73,5 @@
     </div>
   </div>
 
-  <script src="{{url_for('static', filename='js/assignment.js')}}"></script>
 
 {% endblock %}
