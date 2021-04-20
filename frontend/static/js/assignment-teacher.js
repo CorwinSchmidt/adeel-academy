@@ -1,13 +1,13 @@
 function sendToBackendGrade(id, grade) {
     const data = {
-        "type" : 'grade_submit',
-        "studentAssignmentId" : id,
+        // "type" : 'grade_submit',
+        // "studentAssignmentId" : id,
         "grade" : grade,
     };
 
     console.log(data);
-    fetch(window.location.href, {
-        method: "POST", 
+    fetch("http://127.0.0.1:5000/studentassignments/" + id , {
+        method: "PATCH", 
         body : JSON.stringify(data), 
         headers: {
             'Content-Type': 'application/json', 
@@ -24,6 +24,7 @@ function sendToBackendGrade(id, grade) {
 
 var buttons = document.getElementsByClassName('grade-sub');
 var fields = document.getElementsByClassName('grade-form');
+var ids = document.getElementsByClassName('grade-id');
 for (var i=0 ; i < buttons.length ; i++){
     (function(index){
     buttons[index].onclick = function(){
@@ -31,6 +32,8 @@ for (var i=0 ; i < buttons.length ; i++){
         // sendToBackend(fields[index].value);
         console.log("index", index);
         console.log(fields[index].value);
+        console.log(ids[index].innerHTML);
+        sendToBackendGrade(ids[index].innerHTML, fields[index].value)
     };
     })(i)
 }

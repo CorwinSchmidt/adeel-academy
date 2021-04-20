@@ -1268,25 +1268,12 @@ class StudentAssignmentResource(Resource):
         return student_assignment_schema.dump(student_ass)
 
     def patch(self, assignmentId):
-        student_ass = StudentAssignment.query.get_or_404(assignmentId)
+        student_ass = StudentAssignment.query.filter_by(courseAssignmentId=assignmentId).first()
 
-        if 'assignmentId' in request.json['assignmentId']:
-            student_ass.assignmentId = request.json['assignmentId']
+        data = request.json
 
-        if 'name' in request.json['name']:
-            student_ass.name = request.json['name']
-
-        if 'description' in request.json['description']:
-            student_ass.description = request.json['description']
-
-        if 'dueDate' in request.json['dueDate']:
-            student_ass.dueDate = request.json['dueDate']
-
-        if 'grade' in request.json['grade']:
-            student_ass.grade = request.json['grade']
-
-        if 'turnedIn' in request.json['turnedIn']:
-            student_ass.turnedIn = request.json['turnedIn']
+        if 'grade' in data:
+            student_ass.grade = data['grade']
 
         db.session.commit()
         return student_assignment_schema.dump(student_ass)

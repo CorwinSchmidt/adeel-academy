@@ -49,6 +49,11 @@
                 {% if sub.grade == -1 %}
                 <!-- when not graded -->
                   <p style="color: red;">Not graded!</p>
+                  <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Grade" style="width: 5vw;">
+
+                  <div id="assignment-id" class="grade-id" style="display: none;">{{ sub.studentAssignmentId }}</div>
+
+                  <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Grade</button>
                   
                 {% else %}
                   <p style="color: green;">Graded: {{ sub.grade }}</p>
@@ -56,9 +61,7 @@
                 {% endif %}
                 <h3>Submission:</h3>
                 <p>{{ sub.text}}</p>
-                <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Grade" style="width: 5vw;">
-
-                <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Grade</button>
+                
               </li>
 
               {% endfor %}
