@@ -15,12 +15,10 @@
           <!-- Modules -->
           <p style="text-align: center; font-size: 1rem;">Modules</p>
           {% if is_teacher %}
-            <button type="button" class="btn btn-success" id="create-module">Create Module</button>
-          </br>
-          </br>
-          <input class="form-control" id ="module-name"type="text" placeholder="Module name" style="width: 12vw; display:none">
-          <input class="form-control" id ="module-description"type="text" placeholder="Module description" style="width: 12vw; display:none">
-          <button type="button" class="btn btn-success" id="send-module" style="display: none;">Create</button>
+            <button type="button" class="btn btn-success" id="create-module" style="margin-bottom: 1rem;">Create Module</button>
+          <input class="form-control" id ="module-name"type="text" placeholder="Name" style="width: 100%; display:none; margin-bottom: 0.2rem;">
+          <input class="form-control" id ="module-description"type="text" placeholder="Description" style="width: 100%; display:none; margin-bottom: 0.2rem;">
+          <button type="button" class="btn btn-success" id="send-module" style="display: none; margin-bottom: 1rem;">Create</button>
           {% endif %}
           <ul class="list-group">
             {% for module in courseModules %}
@@ -41,13 +39,11 @@
           <!-- Assignments -->
           <p style="text-align: center; font-size: 1rem;">Assignments</p>
           {% if is_teacher %}
-            <button type="button" class="btn btn-success" id="create-assignment">Create Assignment</button>
-            </br>
-            </br>
-            <input class="form-control" id ="assignment-name"type="text" placeholder="Name" style="width: 12vw; display:none">
-            <input class="form-control" id ="assignment-description"type="text" placeholder="Description" style="width: 12vw; display:none">
-            <input class="form-control" id ="assignment-duedate"type="text" placeholder="Due data eg 10/24/1998" style="width: 12vw; display:none">
-            <button type="button" class="btn btn-success" id="send-assignment" style="display: none;">Create</button>
+            <button type="button" class="btn btn-success" id="create-assignment" style="margin-bottom: 1rem;">Create Assignment</button>
+            <input class="form-control" id ="assignment-name"type="text" placeholder="Name" style="width: 100%; display:none; margin-bottom: 0.2rem;">
+            <input class="form-control" id ="assignment-description"type="text" placeholder="Description" style="width: 100%; display:none; margin-bottom: 0.2rem;">
+            <input class="form-control" id ="assignment-duedate"type="text" placeholder="Due date mm/dd/yyyy" style="width: 100%; display:none; margin-bottom: 0.2rem;">
+            <button type="button" class="btn btn-success" id="send-assignment" style="display: none; margin-bottom: 1rem;">Create</button>
           {% endif %}
           <ul class="list-group">
             {% for assignment in courseAssignments %}
