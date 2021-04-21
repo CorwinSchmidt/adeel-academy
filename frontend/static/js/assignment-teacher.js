@@ -37,3 +37,37 @@ for (var i=0 ; i < buttons.length ; i++){
     };
     })(i)
 }
+
+var downloads = document.getElementsByClassName('download-button');
+
+for (var j = 0; j < downloads.length; j++) {
+    downloads[j].addEventListener('click', function() {
+        console.clear();
+        console.log("You clicked:", this.id);
+
+        const data = {
+            "type" : 'text_download',
+            "studentAssignmentId" : this.id,
+        };
+    
+        console.log(data);
+        fetch(window.location.href , {
+            method: "POST", 
+            body : JSON.stringify(data), 
+            headers: {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'}
+        }).then(response => {
+            response.json().then(json => {
+                // code that can access both here
+                if (response.status >= 400){
+                    console.log("error sending course to backend");
+                }
+            });
+        });
+
+        window.open(window.location.origin + "/download/"+this.id)
+
+
+    });
+}

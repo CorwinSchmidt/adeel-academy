@@ -43,14 +43,17 @@
                 <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Input Grade %" style="width: 8.5rem; margin-right: 1rem">
                 <div id="assignment-id" class="grade-id" style="display: none;">{{ sub.studentAssignmentId }}</div>
                 <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Submit Grade</button>
+
               </div>
       
             {% else %}
               <p style="color: green;">Graded: {{ sub.grade }}</p>
             {% endif %}
+
             <h3>Submission:</h3>
             <p>{{ sub.text}}</p>
-      
+            <button type="button" class="btn btn-primary download-button" id="{{ sub.studentAssignmentId }}" >Download Submission</button>
+              
           </li>
           {% endfor %}
       

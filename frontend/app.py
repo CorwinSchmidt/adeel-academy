@@ -1,7 +1,7 @@
 import os
 from re import sub
 from typing import NamedTuple, NoReturn
-from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response
+from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify, Response, send_file
 from flask_cors import CORS
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, RadioField
 import requests
@@ -587,6 +587,18 @@ def assignment(assignmentId):
     date = str(assignment_req['dueDate'])
     assignment_req['dueDate'] = date[:2] + '/' + date[2:4] + "/" + date[4:]
 
+    # download assignments for teachers
+    def download_assignment(assignment_id: int):
+        # get path for new file
+        file_path = "assignments/" + str(assignment_id) + ".txt"
+        # get assignment text from request
+        student_assignment_req = req("get", "studentassignments", id=assignment_id)
+        # create and write file 
+        text_file = open(file_path, "w")
+        text_file.write(student_assignment_req['text'])
+        # return attatchment to user
+        return file_path
+
 
     course_req = req("get", "courses", id=assignment_req['courseId'])
     submitted = ''
@@ -631,6 +643,11 @@ def assignment(assignmentId):
         }
         text_req = req('post', 'studentassignments', data=data)
         print(text_req)
+    
+    if request.method == 'POST' and request.get_json()['type'] == 'text_download':
+        print("downloading", request.get_json()['studentAssignmentId'])
+        file_path = download_assignment(request.get_json()['studentAssignmentId'])
+        return send_file(file_path)
 
     
     return render_template('assignment.html', 
@@ -640,6 +657,11 @@ def assignment(assignmentId):
         submitted=submitted,
         text=text,
         submissions=submissions)
+
+@app.route('/download/<file_id>', methods=['GET', 'POST'])
+def download(file_id):
+    file_path = "assignments/" + str(file_id) + ".txt"
+    return send_file(file_path, as_attachment=True)
 
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
