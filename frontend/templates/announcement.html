@@ -1,0 +1,12 @@
+{% extends "base-logged-in.html" %}
+
+{% block header %}
+<title>{{ announcement.name }}</title>
+{% endblock %}
+
+{% block body %}
+<div class="container" style="margin-top: 1rem;">
+    <h3>{{ announcement.name }}</h3>
+    <p style="margin-top: 1rem;">{{ announcement.body }}</p>
+</div>
+{% endblock %}
