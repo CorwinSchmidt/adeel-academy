@@ -643,6 +643,11 @@ def assignment(assignmentId):
 
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
     # http://127.0.0.1:8000/results/?search=asdf
     courses = []
     modules = []
@@ -737,12 +742,21 @@ def results():
 
 @app.route('/search')
 def search():
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
     return render_template('search.html')
 
 
 # module page
 @app.route('/module/<module_id>')
 def modules(module_id):
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
 
     module_req = req('get', 'modules', id=module_id)
 
@@ -756,6 +770,10 @@ def modules(module_id):
 # Displays the Module Documents of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
 def moduleDocuments(courseId, moduleId):
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
     
     modules = []
 
@@ -775,6 +793,10 @@ def moduleDocuments(courseId, moduleId):
 # Displays the Module Assignments of a Given Course  
 @app.route('/course/<courseId>/moduleDocuments/<moduleId>', methods = ["GET", "POST"])
 def moduleAssignments(courseId, moduleId):
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
     
     modules = []
 
@@ -791,6 +813,18 @@ def moduleAssignments(courseId, moduleId):
 
     return render_template('course.html', modules = modules)
 
+@app.route('/announcement/<annoucementId>', methods = ["GET", "POST"])
+def announcement(announcementId):
+
+    #  when not logged in, redirect to login page
+    if session.get("loginId") is None:
+        return redirect(url_for('log_in'))
+
+    # query announcements
+    request = req('GET', "announcements", id = announcementId)
+
+    return render_template('announcement.html', announcement = request)
+
 @app.route('/user/<loginId>', methods=['GET', 'POST'])
 def user(loginId):
 
@@ -798,7 +832,7 @@ def user(loginId):
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
 
-    # TODO: Figure out how to find the user among both 'students' and 'teachers'
+    # TODO: Query logins
 
     # return redirect(url_for('user'), user = request, userType = userType)
 
