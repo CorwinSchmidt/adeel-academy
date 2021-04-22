@@ -720,8 +720,8 @@ def results():
                 'description': module['description'],
             }
             modules.append(module_dic)
-    
-    search_string = request.args.get('search').replace("%20", " ")
+    # get search string and convert lower case
+    search_string = request.args.get('search').replace("%20", " ").lower()
     search_params = request.args.get('filter').replace("%20", " ")
     params_list = search_params.split()
 
@@ -730,17 +730,26 @@ def results():
     def query_courses():
         for course in courses:
             # if search matches name or description of course
-            if search_string in course.get('name') or search_string in course.get('description'):
+            name = str(course.get('name')).lower()
+            description = str(course.get('description')).lower()
+
+            print("descr", course.get('description'))
+            if search_string in name or search_string in description:
                 results.append(course)
     def query_modules():
         for module in modules:
             # if search matches name or description of course
-            if search_string in module.get('name') or search_string in module.get('description'):
+            name = str(module.get('name')).lower()
+            description = str(module.get('description')).lower()
+            if search_string in name or search_string in description:
                 results.append(module)
     def query_assignments():
         for assignment in assignments:
             # if search matches name or description of course
-            if search_string in assignment.get('name') or search_string in assignment.get('description'):
+            name = str(assignment.get('name')).lower()
+            description = str(assignment.get('description')).lower()
+
+            if search_string in name or search_string in description:
                 results.append(assignment)
 
     if params_list[0] == 'all':

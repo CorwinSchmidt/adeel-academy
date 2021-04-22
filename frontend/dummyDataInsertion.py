@@ -35,6 +35,12 @@ data = {
     'dueDate': 10241998,
 }
 course_req = req('post', 'courses', data=data)
+data = {
+    'name': 'SE',
+    'description': 'Software Engineering',
+    # 'dueDate': 10241998,
+}
+course_req = req('post', 'courses', data=data)
 
 teacher_course_req  = req('post', 'teachercourses', data={'courseId':1, 'teacherId':1})
 student_course_req  = req('post', 'studentcourses', data={'courseId':1, 'studentId':1})
