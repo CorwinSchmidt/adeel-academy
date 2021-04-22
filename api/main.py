@@ -201,9 +201,10 @@ class StudentCourses(db.Model):
     studentCourseId = db.Column(db.Integer, primary_key=True)
     courseId = db.Column(db.Integer, db.ForeignKey('course.courseId'))
     studentId= db.Column(db.Integer, db.ForeignKey('student.studentId'))
+    grade = db.Column(db.Integer)
 
     def __repr__(self):
-        return "studentCourseId: {}, courseId: {}, studentId: {}".format(self.studentCourseId, self.courseId, self.studentId)
+        return "studentCourseId: {}, courseId: {}, studentId: {}, grade: {}".format(self.studentCourseId, self.courseId, self.studentId, self.grade)
 
 
 class StudentCoursesSchema(ma.Schema):
@@ -223,6 +224,7 @@ class StudentCourseListResource(Resource):
         new_student_course = StudentCourses(
             courseId=request.json['courseId'],
             studentId=request.json['studentId'],
+            grade= -1
         )
         db.session.add(new_student_course)
         db.session.commit()
@@ -238,15 +240,15 @@ class StudentCourseResource(Resource):
         return studentCourses_schema.dump(student_courses)
 
     def patch(self, studentCourseId):
-        course = Course.query.get_or_404(studentCourseId)
-        if 'studentCourseId' in request.json:
-            course.studentCourseId = request.json['studentCourseId']
-        if 'studentId' in request.json:
-            course.studentId = request.json['studentId']
-        if 'courseId' in request.json:
-            course.courseId = request.json['courseId']
+        course = StudentCourses.query.filter_by(studentCourseId=studentCourseId).first()
+
+        data = request.json
+
+        if 'grade' in data:
+            course.grade = data['grade']
+
         db.session.commit()
-        return studentCourse_schema.dump(course)
+        return student_assignment_schema.dump(course)
 
     def delete(self, studentCourseId):
         student_course = Course.query.get_or_404(studentCourseId)

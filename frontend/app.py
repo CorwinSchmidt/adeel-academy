@@ -368,11 +368,23 @@ def course(courseId):
         return redirect(url_for('log_in'))
 
     # when teacher set is_teacher to true in order to pass to template
+    grade = 0
     is_teacher = False
     if session.get("role") == 'teacher':
         is_teacher = True
-        
-            
+    else:
+        total_grade = 0
+        number_assignments = 0
+        for i in req('get', 'studentassignments'):
+            if i['studentId'] == session['studentId'] and i['grade'] != 0:
+                total_grade += i['grade']
+                number_assignments += 1
+
+        grade = total_grade / number_assignments
+
+
+
+
     teacher_courses = req("GET", "teachercourses")
     student_courses = req("GET", "studentcourses")
     teachers = req("GET", "teachers")
@@ -584,7 +596,8 @@ def course(courseId):
         courseName=name, 
         courseDesc=description, 
         courseModules=modules, courseAssignments=assignments,
-        is_teacher = is_teacher)
+        is_teacher = is_teacher,
+        grade = grade)
 
 # Displays a student's assignments
 @app.route('/student-assignments', methods=['GET', 'POST'])
