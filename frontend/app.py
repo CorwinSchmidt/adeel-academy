@@ -279,10 +279,30 @@ def chat(chat_id):
 
     # get other persons email
     curr_chat = req("get", "haschats", id=chat_id)
+
+    print("curr chat", curr_chat)
+
+    print('user1', curr_chat['userId1'])
+    person1 = req('get', 'studentbyloginid', id=curr_chat['userId1'])
+    if bool(person1) is False:
+        person1 = req('get', 'teacherbyloginid', id= curr_chat['userId1'])
+
+    print('user2', curr_chat['userId2'])
+    person2 = req('get', 'studentbyloginid', id=curr_chat['userId2'])
+    print("person2 empty", person2)
+    if bool(person2) is False:
+        person2 = req('get', 'teacherbyloginid', id= curr_chat['userId2'])
+
+    print(person1, person2)
+
+
+
+
     if curr_chat['userId1'] == session['loginId']:
-        other = req('get', 'logins', id=curr_chat['userId2'])['email']
+        other = person2['name']
     elif curr_chat['userId2'] == session['loginId']:
-        other = req('get', 'logins', id=curr_chat['userId1'])['email']
+        other = person1['name']
+
 
     # get messages
     messages = []
