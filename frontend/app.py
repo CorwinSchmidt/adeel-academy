@@ -325,10 +325,7 @@ def courses():
     if session.get("loginId") is None:
         return redirect(url_for('log_in'))
     
-    courses = []
-    courses_req = req("get", "courses")
-    for i in courses_req:
-        courses.append([i["name"], i["description"], i["courseId"]])
+    courses = req("get", "courses")
     
     isTeacher = False
     if session["role"] == "teacher":
@@ -356,9 +353,32 @@ def courses():
                 }
             )
 
+    if isTeacher:
+        enrolledCourses = req("get", "teachercourses", id=session['teacherId'])
+    else:
+        enrolledCourses = req("get", "studentcourses", id=session['studentId'])
 
-        # print(request.get_json())
-    return render_template('all-courses.html', courses=courses, isTeacher = isTeacher)
+    enrolledCourseIds=[]
+    for course in enrolledCourses:
+        enrolledCourseIds.append(course['courseId'])
+
+    taughtCourses=[]
+    untaughtCourses=[]
+    for course in courses:
+        # We only need the courses the user is not enrolled in
+        if not course['courseId'] in enrolledCourseIds:
+            # Determine whether course already has a teacher
+            if course['teachers']:
+                taughtCourses.append(course)
+            else:
+                untaughtCourses.append(course)
+
+    return render_template(
+        'all-courses.html', 
+        taughtCourses=taughtCourses, 
+        untaughtCourses=untaughtCourses,
+        isTeacher = isTeacher
+    )
 
 # Displays a single course and its information
 @app.route('/course/<courseId>', methods=['GET', 'POST'])

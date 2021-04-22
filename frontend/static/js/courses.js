@@ -34,7 +34,6 @@ var buttons = document.getElementsByClassName('register');
 for (var i=0 ; i < buttons.length ; i++){
     (function(index){
     buttons[index].onclick = function(){
-        // alert("I am button " + );
         sendToBackend(buttons[index].id);
     };
     })(i)
