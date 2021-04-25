@@ -580,6 +580,7 @@ def course(courseId):
     assignments = []
     name = ""
     description=""
+    announcements = []
 
     # get course information
     course = req("get", "courses", id=courseId)
