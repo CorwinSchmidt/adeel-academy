@@ -20,7 +20,7 @@
       {% if not is_teacher %}
         {% if not submitted %}
           <button type="button" class="btn btn-success" id="assignment" style="margin-top: 1rem;">Submit Assignment</button>
-          <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 50vw; display:none; margin: 1rem 0 0.2rem;">
+          <input class="form-control" id ="assignment-text"type="text" placeholder="Enter assignment here" style="width: 100vw; display:none; margin: 1rem 0 0.2rem;">
           <button type="button" class="btn btn-success" id="submit-assignment" style="display: none;">Submit Assignment</button>
           <script src="{{url_for('static', filename='js/assignment-student.js')}}"></script>
         {% endif %}
