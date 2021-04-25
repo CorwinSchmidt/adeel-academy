@@ -601,9 +601,7 @@ def course(courseId):
     for i in assignment_reqs:
         assignments.append([i["courseAssignmentId"], i["name"]])
 
-
-
-    get announcements
+    # get announcements
     req_announcements = req('get', 'announcements', id = courseId)
 
     for i in req_announcements:
