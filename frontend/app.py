@@ -412,6 +412,7 @@ def course(courseId):
     logins = req("GET", 'logins')
     module_recipients = []
     recipients = []
+    announcement_recipients = []
 
     # when post from frontend
     if request.method == 'POST':
@@ -601,13 +602,13 @@ def course(courseId):
 
 
 
-    #get announcements
-    #req_announcements = req('get', 'announcements', id = courseId)
+    get announcements
+    req_announcements = req('get', 'announcements', id = courseId)
 
-    #for i in req_announcements:
+    for i in req_announcements:
 
-        #annoucement = req('get', 'announcements', id = i['announcementId'])
-        #announcements.append([annoucement['announcementId'], annoucement['name']])
+        annoucement = req('get', 'announcements', id = i['announcementId'])
+        announcements.append([annoucement['announcementId'], annoucement['name']])
 
     # This is temporary, for design purposes:
     return render_template(
