@@ -69,15 +69,11 @@ for (var j = 0; j < downloads.length; j++) {
         window.open(window.location.origin + "/download/"+this.id)
     });
 
-    var nextButtons = document.getElementsByClass(next-buitton);
+    var nextButtons = document.getElementsByClassName("next-button");
     for (var i=0 ; i < nextButtons.length ; i++){
         (function(index){
         nextButtons[index].onclick = function(){
-            document.getElementById()
-            console.log("index", index);
-            console.log(fields[index].value);
-            console.log(ids[index].innerHTML);
-            sendToBackendGrade(ids[index].innerHTML, fields[index].value)
+            document.getElementById("")
         };
         })(i)
     }
