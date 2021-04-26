@@ -601,11 +601,11 @@ def course(courseId):
         assignments.append([i["courseAssignmentId"], i["name"]])
 
     #get announcements
-    req_announcements = req('get', 'announcements', id = courseId)
-    announce = []
-    for i in req_announcements:
+    # req_announcements = req('get', 'announcements', id = courseId)
+    # announce = []
+    # for i in req_announcements:
 
-        announce.append([i['announcementId'], i['name']])
+        # announce.append([i['announcementId'], i['name']])
 
     # This is temporary, for design purposes:
     return render_template(
