@@ -32,32 +32,36 @@
 
       <!-- Teacher view -->
       {% if is_teacher  %}
-        <ul class="list-group list-group-flush">
-          {% for sub in submissions %}
-            <li class="list-group-item">
-              <h2>{{ sub.name }}</h2>
-            {% if sub.grade == -1 %}
-            <!-- when not graded -->
-              <div class="d-flex flex-row align-items-center">
-                <p style="color: red; margin-right: 1rem;">Not graded!</p>
-                <input class="form-control grade-form" id ="input-{{ sub.studentAssignmentId }}"type="text" placeholder="Input Grade %" style="width: 8.5rem; margin-right: 1rem">
-                <div id="assignment-id" class="grade-id" style="display: none;">{{ sub.studentAssignmentId }}</div>
-                <button type="button" id="button-{{ sub.studentAssignmentId }}" class="btn btn-secondary grade-sub" >Submit Grade</button>
-
-              </div>
-      
+          {% for i in range(numberOfSubmissions) %}
+            {% if i == 0 %}
+            <div id="submission{{ i }}">
             {% else %}
-              <p style="color: green;">Graded: {{ sub.grade }}</p>
+            <div id="submission{{ i }}" style="display: none;">            
             {% endif %}
-
-            <h3>Submission:</h3>
-            <p>{{ sub.text}}</p>
-            <button type="button" class="btn btn-primary download-button" id="{{ sub.studentAssignmentId }}" >Download Submission</button>
-              
-          </li>
+              <h2 class="sub" style="margin-top: 1rem;">{{ submissions[i].name }}</h2>
+              {% if submissions[i].grade == -1 %}
+              <!-- when not graded -->
+                <div class="d-flex flex-row align-items-center sub">
+                  <p class="sub" style="color: red; margin-right: 1rem;">Not graded!</p>
+                  <input class="form-control grade-form sub" id ="input-{{ submissions[i].studentAssignmentId }}"type="text" placeholder="Input Grade %" style="width: 8.5rem; margin-right: 1rem">
+                  <div id="assignment-id" class="grade-id sub" style="display: none;">{{ submissions[i].studentAssignmentId }}</div>
+                  <button class="sub" type="button" id="button-{{ submissions[i].studentAssignmentId }}" class="btn btn-secondary grade-sub" >Submit Grade</button>
+                </div>
+              {% else %} 
+                <!-- when graded -->
+                <p class="sub" style="color: green;">Graded: {{ submissions[i].grade }}</p>
+              {% endif %}
+              <h3 class="sub" >Submission:</h3>
+              <p class="sub" >{{ submissions[i].text}}</p>
+              {% if i > 0 %}
+                <button type="button" class="btn btn-primary sub previous-button" name="{{ i }}" id="previous" >&#8592; Previous</button>
+              {% endif %}
+              <button type="button" class="btn btn-primary download-button sub" id="{{ submissions[i].studentAssignmentId }}" >Download Submission</button>
+              {% if i < numberOfSubmissions-1 %}
+                <button type="button" class="btn btn-primary sub next-button" name="{{ i }}" id="next" >Next &#8594;</button>
+              {% endif %}
+            </div>
           {% endfor %}
-      
-        </ul>
         <script src="{{url_for('static', filename='js/assignment-teacher.js')}}"></script>
       {% endif %}
     </div>
