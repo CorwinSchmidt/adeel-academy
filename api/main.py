@@ -10,87 +10,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']  = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-
 api = Api(app)
 CORS(app=app)
-
-
-'''
-    Completed: 
-        ********* TEACHER *********HAYDEN
-            String: userId (firebase)
-            String: name
-            String: email
-            String[]: courseId
-            boolean: connected (on/offline)
-                    
-        ******** ADMIN ********HAYDEN
-            String: userId (firebase)
-            String: name
-            String: email
-                    
-        ****** MODULE *****HAYDEN
-            String: moduleId
-            String: name
-            String: description
-            Document[]: documents
-            Course_Assignment[]: assignments
-                    
-        ****** DOCUMENT ******HAYDEN
-            String: documentId
-            Enum type: (file, text, URL, media)
-                    
-        ********* CHAT *********HAYDEN
-            Message[]: messages
-            String[]: userIds (chat partners)
-                    
-        ******* MESSAGE *******HAYDEN
-            String: userId (sender)
-            String: content
-            int: timestamp
-                    
-        ***** ANNOUNCEMENT *****HAYDEN
-            String: name
-            String: description
-            String: courseId
-                    
-        ** COURSE_ASSIGNMENT **HAYDEN
-            String: name
-            String: description
-            int: dueTime
-            String: courseId
-                    
-        ** STUDENT_ASSIGNMENT **HAYDEN
-            String: name
-            String: description
-            int: dueTime
-            boolean: turnedIn
-            float: grade
-    Complete:
-        ********* STUDENT ********* Dean
-            String: userId (firebase)
-            String: name
-            String: email
-            String[]: courseId
-            boolean: connected (on/offline)
-        ******** COURSE ******** Dean
-            String: courseId 
-            String: name
-            String: description
-            String[]: userIds (teachers)
-            String[]: userIds (students)
-            Module[]: modules
-            
-         ******** StudentCourses ********HAYDEN
-            Int: unique takes id
-            Int: StudentId (ref student id)
-            Int: CourseId (ref teacher id)
-
-        ******** TeacherCourses ********HAYDEN
-            Int: teacherCourseId
-            Int: courseId
-            Int: teacherId
-'''
 
 class Student(db.Model):
     studentId = db.Column(db.Integer, primary_key=True)
