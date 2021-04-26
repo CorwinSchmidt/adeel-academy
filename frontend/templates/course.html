@@ -9,11 +9,11 @@
       <div class="row" style="margin-top: 1rem; border-bottom: 2px solid black; text-align: center;">
         <h6 style="font-size: 1.5rem;">{{courseName}}</h6>
         {% if is_teacher == false %}
+          {% if grade == -1 %}
           <p> Your grade is not available until at least 1 assignment is graded</p>
-
-        {% if grade != -1 %}
-          <p> Your grade right now: {{ grade }}</p>
-        {% endif %}
+          {% else %}
+          <p> Grade: {{ grade }}</p>
+          {% endif %}
         {% endif %}
       </div>
       <div class="row" style="margin-top: 1rem;">
