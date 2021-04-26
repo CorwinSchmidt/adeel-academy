@@ -28,6 +28,10 @@
           <h3>Your Submission:</h3>
           <p>{{ text }}</p>
         {% endif %}
+        {% if grade != -1 %}
+          <h4 style="color: green;">Graded: </h4>
+          <p>{{ grade }}</p>
+        {% endif %}
       {% endif %}
 
       <!-- Teacher view -->

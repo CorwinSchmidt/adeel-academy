@@ -1,13 +1,14 @@
 function sendToBackendGrade(id, grade) {
+    console.log("id", id)
     const data = {
-        // "type" : 'grade_submit',
-        // "studentAssignmentId" : id,
+        "type" : 'grade_submit',
+        "studentAssignmentId" : id,
         "grade" : grade,
     };
 
     console.log(data);
-    fetch("http://127.0.0.1:5000/studentassignments/" + id , {
-        method: "PATCH", 
+    fetch(window.location.href, {
+        method: "post", 
         body : JSON.stringify(data), 
         headers: {
             'Content-Type': 'application/json', 

@@ -1191,7 +1191,8 @@ class StudentAssignmentResource(Resource):
         return student_assignment_schema.dump(student_ass)
 
     def patch(self, assignmentId):
-        student_ass = StudentAssignment.query.filter_by(courseAssignmentId=assignmentId).first()
+        print("assId", assignmentId)
+        student_ass = StudentAssignment.query.filter_by(studentAssignmentId=assignmentId).first()
 
         data = request.json
 

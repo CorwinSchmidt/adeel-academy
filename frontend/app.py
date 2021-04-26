@@ -677,10 +677,12 @@ def assignment(assignmentId):
         student_assignment_req = req('get', 'studentassignments')
         submitted = False
         text = ''
+        grade = 0
         for i in student_assignment_req:
             if int(i['courseAssignmentId']) == int(assignmentId) and int(i['studentId']) == int(session['studentId']):
                 submitted = True
                 text = i['text']
+                grade = i['grade']
                 break
             
     if request.method == 'POST' and request.get_json()['type'] == 'student_submit':
@@ -699,6 +701,17 @@ def assignment(assignmentId):
         file_path = download_assignment(request.get_json()['studentAssignmentId'])
         return send_file(file_path)
 
+
+    if request.method == 'POST' and request.get_json()['type'] == 'grade_submit':
+
+        resp = requests.patch(
+            "http://127.0.0.1:5000/studentassignments/" + request.get_json()['studentAssignmentId'], 
+            json= {
+                "grade": request.get_json()['grade']
+            }
+        )
+        print("resp", resp)
+
     
     return render_template('assignment.html', 
         assignment = assignment_req, 
@@ -707,7 +720,8 @@ def assignment(assignmentId):
         submitted=submitted,
         text=text,
         submissions=submissions,
-        numberOfSubmissions=len(submissions)
+        numberOfSubmissions=len(submissions),
+        grade=grade
         )
 
 @app.route('/download/<file_id>', methods=['GET', 'POST'])
