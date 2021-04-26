@@ -706,7 +706,9 @@ def assignment(assignmentId):
         is_teacher= is_teacher,
         submitted=submitted,
         text=text,
-        submissions=submissions)
+        submissions=submissions,
+        numberOfSubmissions=len(submissions)
+        )
 
 @app.route('/download/<file_id>', methods=['GET', 'POST'])
 def download(file_id):
