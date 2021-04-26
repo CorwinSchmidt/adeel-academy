@@ -395,8 +395,16 @@ def course(courseId):
     else:
         total_grade = 0
         number_assignments = 0
+
+        req_course_assignments = req('get', 'assignmentsbycourse', id=courseId)
+
+        course_asses = []
+        for i in req('get', 'assignmentsbycourse', id=courseId):
+            course_asses.append(i['courseAssignmentId'])
+
+
         for i in req('get', 'studentassignments'):
-            if i['studentId'] == session['studentId'] and i['grade'] != 0:
+            if i['studentAssignmentId'] in course_asses and i['studentId'] == session['studentId'] and i['grade'] != 0:
                 total_grade += i['grade']
                 number_assignments += 1
         if number_assignments != 0:
