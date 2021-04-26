@@ -34,6 +34,7 @@ var buttons = document.getElementsByClassName('register');
 for (var i=0 ; i < buttons.length ; i++){
     (function(index){
     buttons[index].onclick = function(){
+        buttons[index].style.display = 'none';
         sendToBackend(buttons[index].id);
     };
     })(i)

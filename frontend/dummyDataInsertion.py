@@ -1,6 +1,5 @@
 from req import req
 
-
 # create student and teacher
 teacher_data = {
     'email': 'teacher@gmail.com',
