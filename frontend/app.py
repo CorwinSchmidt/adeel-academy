@@ -671,13 +671,13 @@ def assignment(assignmentId):
                     "studentAssignmentId": i['studentAssignmentId']
                 })
         print(submissions)
+    grade = 0
 
     if not is_teacher:
         # find if assignment is already complete by current student
         student_assignment_req = req('get', 'studentassignments')
         submitted = False
         text = ''
-        grade = 0
         for i in student_assignment_req:
             if int(i['courseAssignmentId']) == int(assignmentId) and int(i['studentId']) == int(session['studentId']):
                 submitted = True
