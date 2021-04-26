@@ -402,17 +402,13 @@ def course(courseId):
         for i in req('get', 'assignmentsbycourse', id=courseId):
             course_asses.append(i['courseAssignmentId'])
 
-
         for i in req('get', 'studentassignments'):
             if i['studentAssignmentId'] in course_asses and i['studentId'] == session['studentId'] and i['grade'] != 0:
                 total_grade += i['grade']
                 number_assignments += 1
         if number_assignments != 0:
             grade = total_grade / number_assignments
-
-
-
-
+    
     teacher_courses = req("GET", "teachercourses")
     student_courses = req("GET", "studentcourses")
     teachers = req("GET", "teachers")

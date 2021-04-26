@@ -12,7 +12,20 @@
           {% if grade == -1 %}
           <p> Your grade is not available until at least 1 assignment is graded</p>
           {% else %}
-          <p> Grade: {{ grade }}</p>
+            {% if grade <= 50 %}
+              <style>
+                .grade {
+                  color: red;
+                }
+              </style>
+            {% else %}
+              <style>
+                .grade {
+                  color: green;
+                }
+              </style>
+            {% endif %}
+          <p class="grade"> Grade: {{ grade }}</p>
           {% endif %}
         {% endif %}
       </div>
