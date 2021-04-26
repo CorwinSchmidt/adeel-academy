@@ -671,7 +671,7 @@ def assignment(assignmentId):
                     "studentAssignmentId": i['studentAssignmentId']
                 })
         print(submissions)
-    grade = 0
+    grade = -1
 
     if not is_teacher:
         # find if assignment is already complete by current student
