@@ -580,7 +580,6 @@ def course(courseId):
     assignments = []
     name = ""
     description=""
-    announcements = []
 
     # get course information
     course = req("get", "courses", id=courseId)
@@ -601,13 +600,12 @@ def course(courseId):
     for i in assignment_reqs:
         assignments.append([i["courseAssignmentId"], i["name"]])
 
-    # get announcements
+    #get announcements
     req_announcements = req('get', 'announcements', id = courseId)
-
+    announce = []
     for i in req_announcements:
 
-        annoucement = req('get', 'announcements', id = i['announcementId'])
-        announcements.append([annoucement['announcementId'], annoucement['name']])
+        announce.append([i['announcementId'], i['name']])
 
     # This is temporary, for design purposes:
     return render_template(
