@@ -399,8 +399,8 @@ def course(courseId):
             if i['studentId'] == session['studentId'] and i['grade'] != 0:
                 total_grade += i['grade']
                 number_assignments += 1
-
-        grade = total_grade / number_assignments
+        if number_assignments != 0:
+            grade = total_grade / number_assignments
 
 
 
@@ -588,7 +588,7 @@ def course(courseId):
 
     # get modules
     req_modules = req("get", "coursemodules", id=courseId)
-
+    print("req", req_modules)
     for i in req_modules:
         module = req("get", "modules", id=i["moduleId"])
         modules.append([module["moduleId"], module["name"]])
@@ -606,7 +606,7 @@ def course(courseId):
     # for i in req_announcements:
 
         # announce.append([i['announcementId'], i['name']])
-
+    print('modules', modules)
     # This is temporary, for design purposes:
     return render_template(
         'course.html', 
@@ -663,7 +663,6 @@ def assignment(assignmentId):
         submissions = []
         for i in submissions_req:
             if i['courseAssignmentId'] == int(assignmentId):
-                print("found")
                 student_req = req('get', 'students', id=i['studentId'])
                 submissions.append({
                     "name": student_req['name'],

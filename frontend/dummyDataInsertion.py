@@ -7,7 +7,7 @@ teacher_data = {
     'password': 'teacher@gmail.com',
 }
 teacher_login_req = req('post', 'logins', data=teacher_data)
-print(teacher_login_req)
+
 student_data = {
     'email': 'student@gmail.com',
     'password': 'student@gmail.com',
@@ -27,6 +27,9 @@ student_data = {
     'loginId': 2,
 }
 student_req = req('post', 'students', data=student_data)
+
+
+
 
 course_list = []
 # create courses
@@ -79,76 +82,41 @@ course_list.append(data6)
 course_list.append(data7)
 course_list.append(data8)
 
-course_req = req('post', 'courses', data=course_list)
-data = {
-    'name': 'SE',
-    'description': 'Software Engineering',
-    # 'dueDate': 10241998,
-}
-course_req = req('post', 'courses', data=course_list)
+course_id = 1
+
+for i in course_list:
+    course_req = req('post', 'courses', data=i)
 
 
-
-teacher_course_req  = req('post', 'teachercourses', data={'courseId':1, 'teacherId':1})
-student_course_req  = req('post', 'studentcourses', data={'courseId':1, 'studentId':1})
+for i in range(1, len(course_list) - 2):
+    teacher_course_req  = req('post', 'teachercourses', data={'courseId':i, 'teacherId':1})
+    student_course_req  = req('post', 'studentcourses', data={'courseId':i, 'studentId':1})
 
 # create modules and course-module relation
-module_list = []
+for i in range(1, 7):
+    for j in range(1, 9):
+        data = {
+            'name': 'Module ' + str(i),
+            'description': 'Week' + str(i)+ 's Learning Module',
+            'courseId': j,
+        }
 
-data = {
-    'name': 'Module 1',
-    'description': 'Week 1 Learning Module',
-    'courseId': '1',
-}
-data2 = {
-    'name': 'Module 2',
-    'description': 'Week 2 Learning Module',
-    'courseId': '1',
-}
-data3 = {
-    'name': 'Module 3',
-    'description': 'Week 3 Learning Module',
-    'courseId': '1',
-}
-data4 = {
-    'name': 'Module 4',
-    'description': 'Week 4 Learning Module',
-    'courseId': '1',
-}
-data5 = {
-    'name': 'Module 5',
-    'description': 'Week 5 Learning Module',
-    'courseId': '1',
-}
-data6 = {
-    'name': 'Module 6',
-    'description': 'Week 6 Learning Module',
-    'courseId': '1',
-}
-data7 = {
-    'name': 'Module 7',
-    'description': 'Week 7 Learning Module',
-    'courseId': '1',
-}
-data8 = {
-    'name': 'Module 8',
-    'description': 'Week 8 Learning Module',
-    'courseId': '1',
-}
+        req_module = req('post', 'modules', data=data)
 
-module_list.append(data)
-module_list.append(data2)
-module_list.append(data3)
-module_list.append(data4)
-module_list.append(data5)
-module_list.append(data6)
-module_list.append(data7)
-module_list.append(data8)
+        req_module_course = req('post', 'coursemodules', data={
+            'courseId': j,
+            'moduleId': req_module['moduleId']
+        })
 
+        assignment_data = {
+            'courseId':j,
+            'name':'Assignment ' + str(i),
+            'description': "This is an assignment, it is called: Assignment" + str(i) ,
+            'dueDate':10012021
+        }
 
-req_module = req('post', 'modules', data=module_list)
+        req_assignment = req('post', 'courseassignments', data=assignment_data)
 
-course_module_req = req('post', 'coursemodules', data={'courseId':1, 'moduleId':1})
 
 # create assignments and course-assignments relation
 assignment_list = []
@@ -202,16 +170,3 @@ data8 = {
     'description': "Cryptography - RSA Algorithm",
     'dueDate':11192021
 }
-
-assignment_list.append(data)
-assignment_list.append(data2)
-assignment_list.append(data3)
-assignment_list.append(data4)
-assignment_list.append(data5)
-assignment_list.append(data6)
-assignment_list.append(data7)
-assignment_list.append(data8)
-
-assignment_req = req('post', 'courseassignments', data=assignment_list)
-
-course_assignments_req = req('post', 'courseassignments', data = {'courseId' : 1})
