@@ -7,10 +7,6 @@
 {% block body %}
     <div class="container" style="padding-top: 1rem;">
 
-        {% if isTeacher %}
-            <button onclick="newCourse()" type="button" id="new-course" class="btn btn-secondary" style="margin-bottom: 1rem;">Create Course</button>
-        {% endif %}
-
         <div class="card" style="width: 100%;">
             <ul class="list-group list-group-flush">
                 {% for course in untaughtCourses %}
