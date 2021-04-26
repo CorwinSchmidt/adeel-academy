@@ -1,3 +1,15 @@
+var nextButtons = document.getElementsByClassName("next-button");
+console.log("button");
+for (var i=0 ; i < nextButtons.length ; i++){
+    console.log("button");
+    (function(index){
+        nextButtons[index].onclick = function(){
+        console.log("index", index);
+        console.log(nextButtons[index].value);
+        };
+    })(i)
+}
+
 function sendToBackendGrade(id, grade) {
     const data = {
         // "type" : 'grade_submit',
@@ -68,14 +80,5 @@ for (var j = 0; j < downloads.length; j++) {
 
         window.open(window.location.origin + "/download/"+this.id)
     });
-
-    var nextButtons = document.getElementsByClassName("next-button");
-    for (var i=0 ; i < nextButtons.length ; i++){
-        (function(index){
-        nextButtons[index].onclick = function(){
-            document.getElementById("")
-        };
-        })(i)
-    }
 
 }
